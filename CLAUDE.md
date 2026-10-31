@@ -47,6 +47,7 @@ Prompts live in `backend/prompts/` as files, with a `PROMPT_VERSION` constant re
 - Routes only in `main.py`. No global mutable state beyond data loaded once at startup.
 - Clear names over comments. Comments explain why, not what.
 - No new dependency without asking me first.
+- Python at a beginner to intermediate level. Prefer plain functions, simple loops and explicit code over clever one-liners, metaclasses, decorators I did not ask for, or advanced typing tricks. If an advanced feature is the clearly better choice, say so and explain it first.
 - Tests: five to eight focused ones (summary totals against a hand calculation; the query function on a small frame; plan validation rejects a bad column; verification catches an invented number; `/ask` returns the contract shape through FastAPI's test client; an out-of-scope question is declined).
 - Frontend: plain React with hooks. A small `api.js` for fetch with a timeout and error shaping. Show loading, error with retry, empty, and answered states. Disable sending while a request is in flight. Effects that fetch must clean up so stale responses cannot overwrite fresh ones. No component library.
 

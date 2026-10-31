@@ -40,3 +40,19 @@ One entry per decision, five lines at most: what I decided, why, what else I con
 **Why:** No rate table (see M0). Excluding credit notes would hide real adjustments.
 **Alternatives considered:** a separate gross total and credit note total.
 **Revisit if:** analysts need gross spend. Add a credit note count to the response.
+
+## M2: the plan step
+**Decision:** The model returns a plan (data, not code). Required keys in the schema, cross-field checks in `Plan`, and one retry that shows the model its error.
+**Why:** With optional keys, a 7B model skipped `policy_sections` and `filters`, and the plans were valid but wrong. Required keys fixed most of that on the 7 test questions. The checks reject plans whose route has nothing to run.
+**Alternatives considered:** a bigger or different model (`llama3.1:8b`, not tried); letting the model write pandas or SQL (rejected for safety); an enum for `column` in the schema (not tried).
+**Revisit if:** the eval set shows many valid-but-wrong plans, such as a missing filter. Then try an enum for columns or another model.
+
+**Decision:** Prompts are versioned files (`plan_v1`, `v2`, `v3`) and `PROMPT_VERSION` names the one in use. Old versions stay for comparison.
+**Why:** A prompt change changes behaviour. The version in the response meta shows which prompt produced an answer.
+**Alternatives considered:** a prompt string in Python code (harder to diff and read); a hash of the file (automatic, more code).
+**Revisit if:** we forget to bump the constant. Then use a hash.
+
+**Decision:** Ollama context set to 8192 tokens, temperature 0, one retry, then decline with `PlanError`. An unreachable or slow Ollama is a separate `LLMError`.
+**Why:** The default context for this machine is 4k, which is tight with a retry. Temperature 0 makes plans nearly repeatable. A bad plan is a decline, but a down model is an error to show.
+**Alternatives considered:** more retries (the model rarely fixes itself on a third try); a larger context (more memory).
+**Revisit if:** prompts or evidence grow beyond about 6k tokens.
