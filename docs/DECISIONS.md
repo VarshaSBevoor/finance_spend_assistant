@@ -29,3 +29,14 @@ One entry per decision, five lines at most: what I decided, why, what else I con
 **Why:** Short plan and compose calls, JSON schema output, no credits, and a reader of the repo needs only one `ollama pull`.
 **Alternatives considered:** Ollama cloud models (need sign-in and credits, structured output on cloud not verified); thinking models (reasoning comes back in a separate field).
 **Revisit if:** plans are often invalid after the retry. Next try `llama3.1:8b`.
+
+## M1: summary endpoint
+**Decision:** Load the data once at startup in a lifespan function and keep it on `app.state`. The route is a plain `def`.
+**Why:** A broken data file stops the app at startup, not on a user request. Pandas work is blocking, and FastAPI runs plain `def` routes in a thread pool.
+**Alternatives considered:** loading the CSVs per request (simple, wasteful, fails late); a module-level global (harder to test).
+**Revisit if:** the data changes while the app runs. Then reload on a schedule or move to a database.
+
+**Decision:** Summary totals are per currency and net of credit notes (2 negative amounts are included).
+**Why:** No rate table (see M0). Excluding credit notes would hide real adjustments.
+**Alternatives considered:** a separate gross total and credit note total.
+**Revisit if:** analysts need gross spend. Add a credit note count to the response.
