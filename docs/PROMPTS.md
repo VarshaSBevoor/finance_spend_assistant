@@ -1,0 +1,2 @@
+Let's build a finance spend intelligence agent as part of an interview assignment.
+Read CLAUDE.md and reference/assignment_brief.pdf. Do not write code yet. Tell me in your own words: what we are building, the six pipeline steps, what is out of scope, and how we will work together. Then propose the milestone checklist with a time budget for each and wait for my go.

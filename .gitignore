@@ -1,0 +1,7 @@
+backend/.venv
+.env
+__pycache__/
+data.zip
+docs/TIME_LOG.md
+.DS_Store
+learning_steps.md
