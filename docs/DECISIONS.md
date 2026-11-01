@@ -121,3 +121,12 @@ One entry per decision, five lines at most: what I decided, why, what else I con
 **Why:** The brief says "pick one at most". The guardrails cost no extra work. The eval set gives real numbers for the "how you would evaluate" part of the write-up.
 **Alternatives considered:** claiming guardrails as the stretch.
 **Revisit if:** time runs out. The eval set is the first thing to cut, and the README says so.
+
+## M6: rows are shown as a table, not retyped into the answer
+**Decision:** The answer text is the model's short lead only. The rows are not written into it. The UI shows the rows as a table directly under the answer, built from `evidence.data.rows` (code-made, complete, in order), with a heading row per currency when there is more than one. A list of invoices carries 5 core columns (invoice number, date, vendor, amount, currency) plus any column the question filtered on, not all 13.
+**Why:** A user test found the retyped rows a wall of `key: value` text that repeated the evidence table and could not be read at a glance. The guarantee is unchanged: the model cannot drop or reorder rows, because it never writes them. A reader scans a table far faster than text.
+**Alternatives considered:** keep rows in the answer text (what we had); show all 13 columns (too much); let the model choose columns (can drop the one that matters).
+**Revisit if:** an API client needs the rows inside the answer string. They are in `evidence.data.rows`. Hidden columns (description, cost centre, category) are still in the CSV, but not shown in the evidence.
+
+**Decision:** The fallback answer for a long result (more than 3 rows) says "The N result rows are in the evidence table" and does not retype them. Short results (3 rows or fewer) are still written out.
+**Why:** Same reason as above, and the fallback must still pass its own verification (N is the number of rows, which is in the evidence).

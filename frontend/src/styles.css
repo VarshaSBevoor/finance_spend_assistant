@@ -1,0 +1,163 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  color: #1a1a1a;
+  background: #f6f6f4;
+}
+
+.page {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #d8d8d4;
+  border-radius: 6px;
+  padding: 0.5rem 1rem 1rem;
+  margin-bottom: 1rem;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border-bottom: 1px solid #e6e6e2;
+  padding: 0.3rem 0.5rem;
+  text-align: left;
+}
+
+.number {
+  text-align: right;
+}
+
+.error {
+  color: #8a1c1c;
+  background: #fdeeee;
+  border: 1px solid #e5b4b4;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(18rem, 1fr) minmax(22rem, 1.4fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ask-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ask-form input {
+  flex: 1;
+  padding: 0.4rem 0.5rem;
+}
+
+.examples {
+  padding-left: 1.2rem;
+}
+
+.asked {
+  margin-bottom: 0.5rem;
+}
+
+.answer {
+  border: 1px solid #b9cfe6;
+  background: #f1f7fd;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+}
+
+.answer.declined {
+  border-color: #e0c98a;
+  background: #fbf5e4;
+}
+
+.answer-text {
+  white-space: pre-wrap; /* keeps the line breaks in a listed result */
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  background: #fff;
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 0 0.4rem;
+  margin-right: 0.4rem;
+}
+
+.evidence {
+  margin-top: 1rem;
+}
+
+.evidence-block {
+  border: 1px solid #d8d8d4;
+  border-radius: 4px;
+  padding: 0.3rem 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.evidence-block summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.tag {
+  font-family: ui-monospace, monospace;
+  background: #eef1f5;
+  border-radius: 3px;
+  padding: 0 0.3rem;
+}
+
+.policy-text {
+  white-space: pre-wrap;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  background: #fafaf8;
+  padding: 0.5rem;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.checks {
+  list-style: none;
+  padding-left: 0;
+}
+
+.check-pass strong {
+  color: #1d6b2f;
+}
+
+.check-fail strong {
+  color: #8a1c1c;
+}
+
+.detail {
+  color: #555;
+}
+
+.meta {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.group-row td {
+  background: #eef1f5;
+  font-weight: 600;
+}
