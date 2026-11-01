@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 
 from app.llm import OllamaLLM
@@ -58,9 +59,21 @@ def test_ask_declines_an_out_of_scope_question():
 
 def test_ask_rejects_an_empty_question_and_reports_a_missing_model_as_503():
     assert post_ask(FakeLLM([]), question="").status_code == 422
+    assert post_ask(FakeLLM([]), question="x" * 501).status_code == 422  # over the length limit
 
     unreachable = OllamaLLM(host="http://localhost:1")
     response = post_ask(unreachable)
 
     assert response.status_code == 503
     assert "Cannot reach Ollama" in response.json()["detail"]
+
+
+def test_the_app_refuses_to_start_when_the_data_file_is_missing(monkeypatch):
+    def missing_file(*args, **kwargs):
+        raise FileNotFoundError("invoices file is missing")
+
+    monkeypatch.setattr("app.main.load_invoices", missing_file)
+
+    with pytest.raises(FileNotFoundError):
+        with TestClient(app):
+            pass

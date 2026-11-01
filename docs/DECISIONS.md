@@ -100,3 +100,24 @@ One entry per decision, five lines at most: what I decided, why, what else I con
 **Revisit if:** the format grows beyond `KEY=value` lines.
 
 **Known limits, for the README:** the lead sentence can mislead with true numbers; a number can be used in the wrong claim inside one source; rounded figures and number words are not recognised; free-text columns are not checked against known values; the eval set is not built yet.
+
+## M5: tests
+**Decision:** Keep 36 tests and name 8 as the headline tests. The rest are smaller guards for rules the README claims. CLAUDE.md asked for 5 to 8 focused tests, so this is a deliberate extension, agreed on 2026-11-01.
+**Why:** Each test protects a different claim (never add across currencies, missing values are real, a failed check uses the fallback). Merging them to reach 8 would mix unrelated assertions and make a failure harder to read.
+**Alternatives considered:** trim to 8 (cheapest to explain, least protection); trim to about 30 by merging overlaps (not worth the time).
+**Revisit if:** the suite becomes slow or hard to explain. It runs in under a second.
+
+**Headline tests (the 8 to walk through):**
+1. `test_summary.py::test_totals_match_hand_calculation_and_stay_per_currency`: summary totals against a hand calculation.
+2. `test_execute.py::test_sum_with_filter_groups_by_vendor_and_currency_sorted_within_currency`: the query function on a small frame.
+3. `test_validate.py::test_bad_column_value_operator_and_section_are_all_reported`: plan validation rejects a bad column.
+4. `test_verify.py::test_an_invented_number_is_caught`: verification catches an invented number.
+5. `test_main.py::test_ask_returns_the_contract_shape`: `/ask` returns the contract shape.
+6. `test_main.py::test_ask_declines_an_out_of_scope_question`: an out-of-scope question is declined.
+7. `test_pipeline.py::test_an_answer_with_an_invented_number_is_replaced_by_the_fallback`: a failed verification uses the fallback.
+8. `test_pipeline.py::test_a_rejected_plan_is_retried_once_with_the_reasons_and_then_answered`: a rejected plan is retried once.
+
+**Decision:** The one stretch item is the small eval set with a scoring script. Guardrails (decline when it cannot answer, verify and fall back, 422 and 503) are part of the core pipeline, not the stretch.
+**Why:** The brief says "pick one at most". The guardrails cost no extra work. The eval set gives real numbers for the "how you would evaluate" part of the write-up.
+**Alternatives considered:** claiming guardrails as the stretch.
+**Revisit if:** time runs out. The eval set is the first thing to cut, and the README says so.

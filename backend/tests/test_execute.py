@@ -94,3 +94,13 @@ def test_no_matching_invoices_gives_empty_rows_and_zero():
     assert result.rows == []
     assert result.matched_invoice_count == 0
     assert result.how_computed  # still explains what was done
+
+
+def test_a_missing_value_is_its_own_group_when_grouping():
+    query = make_query(group_by=["approved_by"], aggregate="count")
+
+    result = run_data_query(INVOICES, query)
+
+    # INV-3 has no approver. It must not vanish from the counts.
+    counts = {row["approved_by"]: row["invoice_count"] for row in result.rows}
+    assert counts == {"a": 4, "b": 3, None: 1}

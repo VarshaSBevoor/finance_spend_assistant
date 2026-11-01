@@ -94,3 +94,19 @@ def test_a_long_result_gets_the_models_summary_and_every_row_listed_by_code():
     assert response.answer.count("- vendor_name:") == 15  # 5 for each of EUR, GBP and USD
     assert "Currency GBP:" in response.answer
     assert not response.meta.fallback_used
+
+
+def test_a_question_with_no_matching_invoices_is_declined_and_never_composed():
+    no_match_plan = {
+        "route": "data",
+        "data_query": {"filters": [{"column": "amount", "op": "gt", "value": 99999999.0}], "group_by": [], "aggregate": "rows"},
+        "policy_sections": [],
+        "reason": "x",
+    }
+    llm = FakeLLM([no_match_plan], "should not be used")
+
+    response = ask(llm, "Show me invoices above 99999999")
+
+    assert response.declined and llm.compose_calls == 0
+    assert response.evidence.data.matched_invoice_count == 0  # the evidence still shows what was tried
+    assert "nothing to report" in response.answer
