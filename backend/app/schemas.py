@@ -24,3 +24,9 @@ class SummaryResponse(BaseModel):
     spend_by_currency_and_status: list[CurrencyStatusTotal]
     missing_po_count: int
     missing_approver_count: int
+
+
+class DataResult(BaseModel):
+    rows: list[dict]
+    matched_invoice_count: int  # invoices left after the filters, before grouping
+    how_computed: str

@@ -56,3 +56,24 @@ One entry per decision, five lines at most: what I decided, why, what else I con
 **Why:** The default context for this machine is 4k, which is tight with a retry. Temperature 0 makes plans nearly repeatable. A bad plan is a decline, but a down model is an error to show.
 **Alternatives considered:** more retries (the model rarely fixes itself on a third try); a larger context (more memory).
 **Revisit if:** prompts or evidence grow beyond about 6k tokens.
+
+## M3: validate and execute
+**Decision:** `limit` applies per currency whenever the result has a currency column. Results are ordered by currency, then by value. A "top 5 vendors" question returns up to 15 rows (5 per currency).
+**Why:** Currencies cannot be ranked against each other without a rate table, and we have none (see M0). Five rows overall would mix currencies.
+**Alternatives considered:** one overall top 5 (mixes currencies); converting to EUR (needs ECB rates we do not have).
+**Revisit if:** a rate table is supplied.
+
+**Decision:** Grouping keeps missing values as their own group (`dropna=False`). `approved_by ne X` includes invoices with no approver.
+**Why:** A missing approver or PO is a real finding under policy 3.1 and 2.2. Dropping it would hide the invoices that need attention.
+**Alternatives considered:** SQL-style behaviour, where a missing value drops out of a comparison.
+**Revisit if:** analysts find "not approved by X" counts misleading. Then exclude missing values and say so.
+
+**Decision:** The validator rejects bad plans and makes one repair by rule (a sum always groups by currency). Allowed values for currency, status, country and category are read from the data.
+**Why:** A rule is predictable. A guess about what the model meant is how a wrong answer slips through. Reading values from the data means they cannot go stale.
+**Alternatives considered:** repairing typos and case; typing the value lists into the validator.
+**Revisit if:** the retry fails often on case or spelling. Then normalise case before checking.
+
+**Decision:** Free-text columns (vendor_name, description, cost_center, approved_by) are not checked against known values.
+**Why:** The sets are larger and change with the data. A misspelt vendor returns no rows, and the answer says "no matching invoices".
+**Alternatives considered:** checking vendor names against the master.
+**Revisit if:** the eval set shows misspelt names are common.
