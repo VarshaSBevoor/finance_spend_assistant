@@ -4,7 +4,6 @@ from app.execute import run_data_query
 from app.fallback import build_fallback_answer
 from app.llm import LLM, PROMPT_VERSION, PlanError
 from app.plan import Plan, Route
-from app.render import LIST_ROW_THRESHOLD, render_rows
 from app.schemas import AskResponse, Check, Evidence, Meta, PolicyEvidence
 from app.validate import PlanRejected, validate_plan
 from app.verify import all_passed, verify_answer
@@ -44,10 +43,9 @@ def answer_question(question: str, llm: LLM, invoices: pd.DataFrame, policy: dic
     verification = verify_answer(lead, question, evidence)
 
     if all_passed(verification):
+        # For a long result the lead only summarises. The rows are in the evidence, built by
+        # code, and the UI shows them as a table under the answer.
         answer = lead
-        if data is not None and len(data.rows) > LIST_ROW_THRESHOLD:
-            # For a long result the model only summarises. Code lists the rows.
-            answer += "\n\n" + render_rows(data.rows)
         fallback_used = False
     else:
         answer = build_fallback_answer(evidence)

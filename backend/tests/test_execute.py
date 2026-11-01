@@ -81,6 +81,8 @@ def test_rows_are_json_safe_with_missing_values_and_dates():
 
     # Ordered by currency, then amount ascending: INV-2 (EUR 50), INV-6 (GBP 10).
     assert [row["invoice_number"] for row in result.rows] == ["INV-2", "INV-6"]
+    # Only the core columns plus the one the question filtered on, not all of them.
+    assert list(result.rows[0]) == ["invoice_number", "invoice_date", "vendor_name", "amount", "currency", "po_number"]
     assert result.rows[0]["po_number"] is None  # missing stays None, not NaN
     assert result.rows[0]["invoice_date"] == "2025-02-10"  # a plain string, not a Timestamp
     json.dumps(result.rows)  # raises an error if anything is not JSON-safe

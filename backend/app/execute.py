@@ -8,6 +8,18 @@ OPERATOR_TEXT = {
     "in": "in", "is_null": "is missing", "not_null": "is present",
 }
 
+# A list of invoices shows these columns, plus any column the question filtered on.
+# Thirteen columns per row is too much to read at a glance.
+CORE_ROW_COLUMNS = ["invoice_number", "invoice_date", "vendor_name", "amount", "currency"]
+
+
+def columns_for_rows(query: DataQuery) -> list[str]:
+    columns = list(CORE_ROW_COLUMNS)
+    for one_filter in query.filters:
+        if one_filter.column not in columns:
+            columns.append(one_filter.column)
+    return columns
+
 
 def apply_filters(invoices: pd.DataFrame, filters: list[Filter]) -> pd.DataFrame:
     """Keep only the invoices that match every filter (AND)."""
@@ -132,7 +144,7 @@ def describe_query(query: DataQuery) -> str:
     groups = ", ".join(query.group_by)
     for_each = f" for each {groups}" if groups else ""
     if query.aggregate == "rows":
-        parts.append("Listed the matching invoices.")
+        parts.append(f"Listed the matching invoices (columns: {', '.join(columns_for_rows(query))}).")
     elif query.aggregate == "count":
         parts.append(f"Counted invoices{for_each}.")
     else:
@@ -154,6 +166,8 @@ def describe_query(query: DataQuery) -> str:
 def run_data_query(invoices: pd.DataFrame, query: DataQuery) -> DataResult:
     filtered = apply_filters(invoices, query.filters)
     table = order_and_limit(aggregate(filtered, query), query)
+    if query.aggregate == "rows" and not table.empty:
+        table = table[columns_for_rows(query)]  # after sorting, which may need other columns
     return DataResult(
         rows=to_records(table),
         matched_invoice_count=len(filtered),

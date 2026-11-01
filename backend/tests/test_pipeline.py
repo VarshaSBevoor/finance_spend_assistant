@@ -85,14 +85,15 @@ def test_an_out_of_scope_question_is_declined_with_the_reason():
     assert response.evidence.data is None and response.evidence.policy == []
 
 
-def test_a_long_result_gets_the_models_summary_and_every_row_listed_by_code():
+def test_a_long_result_gets_the_models_summary_and_every_row_in_the_evidence():
     lead = "Across 140 invoices, the top 5 vendors are ranked per currency, because amounts in different currencies are never added together [data]."
 
     response = ask(FakeLLM([TOP_5_PLAN], lead), "What are our top 5 vendors by total spend in 2025?")
 
-    assert response.answer.startswith(lead)
-    assert response.answer.count("- vendor_name:") == 15  # 5 for each of EUR, GBP and USD
-    assert "Currency GBP:" in response.answer
+    assert response.answer == lead  # the rows are not retyped into the answer
+    rows = response.evidence.data.rows
+    assert len(rows) == 15  # 5 for each of EUR, GBP and USD, built by code
+    assert [row["currency"] for row in rows] == ["EUR"] * 5 + ["GBP"] * 5 + ["USD"] * 5
     assert not response.meta.fallback_used
 
 
