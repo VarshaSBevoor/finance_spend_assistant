@@ -43,41 +43,16 @@ Open **http://localhost:5173**. Vite listens on `localhost`, so if `127.0.0.1` d
 
 ## How it works
 
-```
- BROWSER  http://localhost:5173  (React)
- +-------------------------------------------------------------------+
- |  Summary panel      Chat panel              Evidence panel        |
- |  loads on startup   question, loading,      under every answer:   |
- |                     error + retry           policy text, rows,    |
- |                                             checks, model         |
- +----------+------------------------------+-------------------------+
-            | GET /summary                 | POST /ask {question}
-            v                              v
- +-------------------------------------------------------------------+
- |  Vite dev server: one origin, forwards both calls (proxy)         |
- +----------+------------------------------+-------------------------+
-            |                              |
-            v                              v
- FASTAPI  http://127.0.0.1:8000
- +-------------------------------------------------------------------+
- |  /summary  pandas totals per currency (no model involved)         |
- |                                                                   |
- |  /ask      1 PLAN      question ----------------> MODEL, call 1   |
- |                        a small JSON plan <------- returns a plan  |
- |            2 VALIDATE  allowlist of columns, operators, values    |
- |                        and policy sections. A rejected plan goes  |
- |                        back to the model once (call 1 again)      |
- |            3 EXECUTE   pandas query on the CSV data; policy text  |
- |                        copied from the file by section id         |
- |            4 COMPOSE   question + evidence only ---> MODEL, call 2|
- |                        short answer with citations <-- returns it |
- |            5 VERIFY    numbers, citations, per-currency rule. A   |
- |                        failed check swaps in a plain answer built |
- |                        from the evidence (the fallback)           |
- |            6 RESPOND   answer, evidence, checks, meta             |
- +-------------------------------------------------------------------+
-   MODEL = Ollama on localhost:11434, qwen2.5:7b-instruct
-```
+![How a question becomes a checked answer: the browser, the Vite proxy, the FastAPI backend with its six steps, and the two calls to the local model](docs/architecture.svg)
+
+1. **Plan:** the model turns the question into a small JSON plan (a route, a data query, policy section ids). It writes no code. *Model call 1.*
+2. **Validate:** code checks the plan against an allowlist of columns, operators, values and policy sections. A rejected plan goes back to the model once.
+3. **Execute:** pandas runs the query on the CSV data, and the policy text is copied from the file by section id.
+4. **Compose:** the model sees the question and only the evidence, and writes a short answer with citations. *Model call 2.*
+5. **Verify:** numbers, citations and the per-currency rule are checked. A failed check swaps in a plain answer built from the evidence (the fallback).
+6. **Respond:** the answer, the evidence, the checks and the model and prompt version go back to the browser.
+
+`GET /summary` is plain pandas, with no model involved.
 
 **The API**
 - `GET /summary`: invoice count, spend per currency, spend per currency and vendor status, and how many invoices have no PO number or no approver.
@@ -155,5 +130,5 @@ backend/prompts/   the prompts sent to the model
 backend/tests/     36 tests and a fake model (tests only)
 frontend/src/      api.js and the Summary, Chat and Evidence components
 data/              the invoices, vendor master and policy excerpt
-docs/              AI_USAGE.md, DECISIONS.md, PROMPTS.md
+docs/              AI_USAGE.md, DECISIONS.md, PROMPTS.md, architecture.svg (the diagram)
 ```

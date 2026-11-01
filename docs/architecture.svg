@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 900" width="1100" height="900" role="img" aria-labelledby="title desc" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <title id="title">How a question becomes a checked answer</title>
+  <desc id="desc">A browser with a summary panel, a chat panel and an evidence panel talks through a Vite proxy to a FastAPI backend. The backend runs six steps: plan, validate, execute, compose, verify and respond. The plan and compose steps call a local Ollama model. The execute step reads the CSV data and the policy file.</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9aa4b2"/>
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f0a43a"/>
+    </marker>
+  </defs>
+
+  <!-- dark background, drawn into the image so it looks the same in any page theme -->
+  <rect x="0" y="0" width="1100" height="900" rx="14" fill="#0d1117" stroke="#30363d"/>
+
+  <text x="40" y="42" font-size="22" font-weight="700" fill="#e6edf3">How a question becomes a checked answer</text>
+  <text x="40" y="66" font-size="13" fill="#8b949e">Finance spend assistant: FastAPI backend, React frontend, a local model through Ollama</text>
+
+  <!-- BROWSER -->
+  <rect x="40" y="86" width="740" height="130" rx="12" fill="#0c2326" stroke="#2ec4b6" stroke-width="1.5"/>
+  <text x="58" y="108" font-size="13" font-weight="700" fill="#5eead4">BROWSER  (React, http://localhost:5173)</text>
+
+  <rect x="60" y="120" width="220" height="80" rx="8" fill="#111b21" stroke="#2ec4b6"/>
+  <text x="76" y="144" font-size="14" font-weight="700" fill="#e6edf3">Summary panel</text>
+  <text x="76" y="164" font-size="12" fill="#9da7b3">Loads on startup:</text>
+  <text x="76" y="180" font-size="12" fill="#9da7b3">totals per currency and status</text>
+
+  <rect x="300" y="120" width="220" height="80" rx="8" fill="#111b21" stroke="#2ec4b6"/>
+  <text x="316" y="144" font-size="14" font-weight="700" fill="#e6edf3">Chat panel</text>
+  <text x="316" y="164" font-size="12" fill="#9da7b3">Question box, loading state,</text>
+  <text x="316" y="180" font-size="12" fill="#9da7b3">error with retry</text>
+
+  <rect x="540" y="120" width="220" height="80" rx="8" fill="#111b21" stroke="#2ec4b6"/>
+  <text x="556" y="144" font-size="14" font-weight="700" fill="#e6edf3">Evidence panel</text>
+  <text x="556" y="164" font-size="12" fill="#9da7b3">Policy text, rows, checks,</text>
+  <text x="556" y="180" font-size="12" fill="#9da7b3">model and prompt version</text>
+
+  <!-- arrows browser to proxy -->
+  <line x1="170" y1="200" x2="170" y2="248" stroke="#9aa4b2" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="180" y="236" font-size="11" fill="#9aa4b2">GET /summary</text>
+  <line x1="410" y1="200" x2="410" y2="248" stroke="#9aa4b2" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="420" y="236" font-size="11" fill="#9aa4b2">POST /ask  {question}</text>
+  <line x1="650" y1="248" x2="650" y2="204" stroke="#9aa4b2" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="660" y="236" font-size="11" fill="#9aa4b2">answer + evidence</text>
+
+  <!-- PROXY -->
+  <rect x="40" y="250" width="740" height="36" rx="8" fill="#161b22" stroke="#484f58"/>
+  <text x="410" y="273" font-size="12.5" text-anchor="middle" fill="#c9d1d9">Vite dev proxy: the browser sees one origin, so the backend needs no CORS setup</text>
+
+  <line x1="170" y1="288" x2="170" y2="318" stroke="#9aa4b2" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="410" y1="288" x2="410" y2="318" stroke="#9aa4b2" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="650" y1="318" x2="650" y2="290" stroke="#9aa4b2" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- BACKEND container -->
+  <rect x="40" y="320" width="740" height="508" rx="12" fill="#0e1a2e" stroke="#5b8def" stroke-width="1.5"/>
+  <text x="58" y="344" font-size="13" font-weight="700" fill="#8ab4ff">FASTAPI BACKEND  (http://127.0.0.1:8000)</text>
+
+  <!-- summary card -->
+  <rect x="60" y="360" width="190" height="86" rx="8" fill="#12233d" stroke="#5b8def"/>
+  <text x="74" y="384" font-size="14" font-weight="700" fill="#e6edf3">GET /summary</text>
+  <text x="74" y="404" font-size="12" fill="#9da7b3">pandas totals per currency</text>
+  <text x="74" y="420" font-size="12" fill="#9da7b3">and vendor status.</text>
+  <text x="74" y="436" font-size="12" font-weight="600" fill="#8ab4ff">No model involved.</text>
+
+  <!-- data files card -->
+  <rect x="60" y="512" width="190" height="130" rx="8" fill="#1c1f14" stroke="#8f9440"/>
+  <text x="74" y="536" font-size="14" font-weight="700" fill="#e6edf3">Data files</text>
+  <text x="74" y="560" font-size="12" fill="#9da7b3">invoices CSV</text>
+  <text x="74" y="578" font-size="12" fill="#9da7b3">vendor master CSV</text>
+  <text x="74" y="596" font-size="12" fill="#9da7b3">procurement policy</text>
+  <text x="74" y="620" font-size="11" fill="#b5ba63">loaded once at startup</text>
+  <line x1="155" y1="512" x2="155" y2="450" stroke="#9aa4b2" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="250" y1="544" x2="278" y2="544" stroke="#9aa4b2" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- retry loop from VALIDATE back to PLAN -->
+  <path d="M 280 468 C 256 468 256 392 278 392" fill="none" stroke="#f0a43a" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrow-amber)"/>
+
+  <!-- step 1 PLAN (model) -->
+  <rect x="280" y="360" width="480" height="64" rx="8" fill="#33230d" stroke="#f0a43a" stroke-width="1.5"/>
+  <text x="296" y="384" font-size="14" font-weight="700" fill="#e6edf3">1  PLAN</text>
+  <rect x="690" y="372" width="56" height="18" rx="9" fill="#f0a43a"/>
+  <text x="718" y="385" font-size="10.5" font-weight="700" text-anchor="middle" fill="#1a1100">MODEL</text>
+  <text x="296" y="404" font-size="12" fill="#b4bcc7">The model turns the question into a small JSON plan:</text>
+  <text x="296" y="418" font-size="12" fill="#b4bcc7">route, data query and policy sections. It writes no code.</text>
+
+  <!-- step 2 VALIDATE (code) -->
+  <rect x="280" y="436" width="480" height="64" rx="8" fill="#12233d" stroke="#5b8def" stroke-width="1.5"/>
+  <text x="296" y="460" font-size="14" font-weight="700" fill="#e6edf3">2  VALIDATE</text>
+  <rect x="690" y="448" width="56" height="18" rx="9" fill="#5b8def"/>
+  <text x="718" y="461" font-size="10.5" font-weight="700" text-anchor="middle" fill="#ffffff">CODE</text>
+  <text x="296" y="480" font-size="12" fill="#b4bcc7">Allowlist of columns, operators, values and policy sections.</text>
+  <text x="296" y="494" font-size="12" fill="#b4bcc7">A rejected plan goes back to the model once.</text>
+
+  <!-- step 3 EXECUTE (code) -->
+  <rect x="280" y="512" width="480" height="64" rx="8" fill="#12233d" stroke="#5b8def" stroke-width="1.5"/>
+  <text x="296" y="536" font-size="14" font-weight="700" fill="#e6edf3">3  EXECUTE</text>
+  <rect x="690" y="524" width="56" height="18" rx="9" fill="#5b8def"/>
+  <text x="718" y="537" font-size="10.5" font-weight="700" text-anchor="middle" fill="#ffffff">CODE</text>
+  <text x="296" y="556" font-size="12" fill="#b4bcc7">pandas runs the query. Policy text is copied from the file</text>
+  <text x="296" y="570" font-size="12" fill="#b4bcc7">by section id. The model never does arithmetic or quotes.</text>
+
+  <!-- step 4 COMPOSE (model) -->
+  <rect x="280" y="588" width="480" height="64" rx="8" fill="#33230d" stroke="#f0a43a" stroke-width="1.5"/>
+  <text x="296" y="612" font-size="14" font-weight="700" fill="#e6edf3">4  COMPOSE</text>
+  <rect x="690" y="600" width="56" height="18" rx="9" fill="#f0a43a"/>
+  <text x="718" y="613" font-size="10.5" font-weight="700" text-anchor="middle" fill="#1a1100">MODEL</text>
+  <text x="296" y="632" font-size="12" fill="#b4bcc7">The model sees the question and only the evidence, and</text>
+  <text x="296" y="646" font-size="12" fill="#b4bcc7">writes a short answer with citations such as [data].</text>
+
+  <!-- step 5 VERIFY (check) -->
+  <rect x="280" y="664" width="480" height="64" rx="8" fill="#0f2a18" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="296" y="688" font-size="14" font-weight="700" fill="#e6edf3">5  VERIFY</text>
+  <rect x="690" y="676" width="56" height="18" rx="9" fill="#3fb950"/>
+  <text x="718" y="689" font-size="10.5" font-weight="700" text-anchor="middle" fill="#04130a">CHECK</text>
+  <text x="296" y="708" font-size="12" fill="#b4bcc7">Numbers, citations and the per-currency rule are checked.</text>
+  <text x="296" y="722" font-size="12" fill="#b4bcc7">A failed check swaps in a plain answer built from the evidence.</text>
+
+  <!-- step 6 RESPOND (code) -->
+  <rect x="280" y="740" width="480" height="64" rx="8" fill="#12233d" stroke="#5b8def" stroke-width="1.5"/>
+  <text x="296" y="764" font-size="14" font-weight="700" fill="#e6edf3">6  RESPOND</text>
+  <rect x="690" y="752" width="56" height="18" rx="9" fill="#5b8def"/>
+  <text x="718" y="765" font-size="10.5" font-weight="700" text-anchor="middle" fill="#ffffff">CODE</text>
+  <text x="296" y="784" font-size="12" fill="#b4bcc7">Answer, policy text, data rows, checks, and the model and</text>
+  <text x="296" y="798" font-size="12" fill="#b4bcc7">prompt version, sent back to the browser.</text>
+
+  <!-- arrows between steps -->
+  <line x1="520" y1="424" x2="520" y2="434" stroke="#9aa4b2" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="520" y1="500" x2="520" y2="510" stroke="#9aa4b2" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="520" y1="576" x2="520" y2="586" stroke="#9aa4b2" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="520" y1="652" x2="520" y2="662" stroke="#9aa4b2" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="520" y1="728" x2="520" y2="738" stroke="#9aa4b2" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- OLLAMA -->
+  <rect x="860" y="360" width="200" height="292" rx="12" fill="#33230d" stroke="#f0a43a" stroke-width="1.5"/>
+  <text x="960" y="392" font-size="15" font-weight="700" text-anchor="middle" fill="#e6edf3">Local model</text>
+  <text x="960" y="414" font-size="13" text-anchor="middle" fill="#b4bcc7">Ollama</text>
+  <text x="960" y="432" font-size="12" text-anchor="middle" fill="#9da7b3">localhost:11434</text>
+  <text x="960" y="466" font-size="13" font-weight="700" text-anchor="middle" fill="#f6c26b">qwen2.5:7b-instruct</text>
+  <text x="960" y="500" font-size="12" text-anchor="middle" fill="#b4bcc7">Runs on your machine.</text>
+  <text x="960" y="518" font-size="12" text-anchor="middle" fill="#b4bcc7">No API key.</text>
+  <text x="960" y="560" font-size="12" font-weight="600" text-anchor="middle" fill="#f6c26b">Up to two calls per question:</text>
+  <text x="960" y="578" font-size="12" text-anchor="middle" fill="#b4bcc7">plan, then compose.</text>
+  <text x="960" y="598" font-size="11" text-anchor="middle" fill="#9da7b3">A rejected plan adds one</text>
+  <text x="960" y="612" font-size="11" text-anchor="middle" fill="#9da7b3">more plan call.</text>
+
+  <!-- the two model calls -->
+  <line x1="762" y1="384" x2="858" y2="384" stroke="#f0a43a" stroke-width="1.8" marker-end="url(#arrow-amber)"/>
+  <line x1="858" y1="402" x2="762" y2="402" stroke="#f0a43a" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-amber)"/>
+  <text x="810" y="376" font-size="11" font-weight="700" text-anchor="middle" fill="#f6c26b">call 1</text>
+  <text x="810" y="416" font-size="10.5" text-anchor="middle" fill="#f6c26b">plan</text>
+
+  <line x1="762" y1="612" x2="858" y2="612" stroke="#f0a43a" stroke-width="1.8" marker-end="url(#arrow-amber)"/>
+  <line x1="858" y1="630" x2="762" y2="630" stroke="#f0a43a" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-amber)"/>
+  <text x="810" y="604" font-size="11" font-weight="700" text-anchor="middle" fill="#f6c26b">call 2</text>
+  <text x="810" y="644" font-size="10.5" text-anchor="middle" fill="#f6c26b">answer</text>
+
+  <!-- LEGEND -->
+  <rect x="860" y="690" width="200" height="138" rx="10" fill="#161b22" stroke="#30363d"/>
+  <text x="876" y="712" font-size="12" font-weight="700" fill="#e6edf3">Legend</text>
+  <rect x="876" y="724" width="14" height="14" rx="3" fill="#12233d" stroke="#5b8def"/>
+  <text x="898" y="736" font-size="12" fill="#b4bcc7">Code (no model)</text>
+  <rect x="876" y="746" width="14" height="14" rx="3" fill="#33230d" stroke="#f0a43a"/>
+  <text x="898" y="758" font-size="12" fill="#b4bcc7">Model call</text>
+  <rect x="876" y="768" width="14" height="14" rx="3" fill="#0f2a18" stroke="#3fb950"/>
+  <text x="898" y="780" font-size="12" fill="#b4bcc7">Safety check</text>
+  <line x1="876" y1="802" x2="900" y2="802" stroke="#f0a43a" stroke-width="1.8" stroke-dasharray="5 4"/>
+  <text x="908" y="806" font-size="12" fill="#b4bcc7">Reply or retry</text>
+
+  <!-- PRINCIPLE -->
+  <rect x="40" y="846" width="1020" height="38" rx="10" fill="#1f6feb"/>
+  <text x="550" y="870" font-size="14.5" font-weight="600" text-anchor="middle" fill="#ffffff">Code computes.   The model explains.   The UI shows receipts.</text>
+</svg>
