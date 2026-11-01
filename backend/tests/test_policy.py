@@ -1,6 +1,6 @@
 import re
 
-from app.llm import PROMPT_VERSION, PROMPTS_DIR
+from app.llm import PLAN_PROMPT, PROMPTS_DIR
 from app.policy import POLICY_FILE, load_policy
 
 
@@ -16,7 +16,7 @@ def test_policy_sections_are_exact_text_from_the_file():
 
 
 def test_prompt_menu_lists_exactly_the_policy_section_ids():
-    prompt = (PROMPTS_DIR / f"{PROMPT_VERSION}.txt").read_text()
+    prompt = (PROMPTS_DIR / f"{PLAN_PROMPT}.txt").read_text()
     menu = prompt.split("POLICY SECTIONS")[1].split("RULES")[0]
     menu_ids = set(re.findall(r"^(\d+(?:\.\d+)?) ", menu, re.M))
 

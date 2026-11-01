@@ -4,10 +4,18 @@ import httpx
 from pydantic import ValidationError
 
 from app.plan import Plan
+from app.render import render_rows
+from app.schemas import Evidence
+from app.settings import DEFAULT_HOST, DEFAULT_MODEL
 
-# Bump this whenever a prompt file changes. It is returned in the response meta.
-PROMPT_VERSION = "plan_v3"
+# Bump the matching name whenever a prompt file changes. PROMPT_VERSION goes in the response meta.
+PLAN_PROMPT = "plan_v3"
+COMPOSE_PROMPT = "compose_v2"
+PROMPT_VERSION = f"{PLAN_PROMPT}+{COMPOSE_PROMPT}"
 PROMPTS_DIR = Path(__file__).resolve().parents[1] / "prompts"
+
+# The model sees at most this many rows, so a long result cannot fill its context.
+MAX_ROWS_FOR_MODEL = 20
 
 
 class LLMError(Exception):
@@ -21,30 +29,42 @@ class PlanError(Exception):
 class LLM:
     """What the pipeline needs from a model. Tests use a fake with the same methods."""
 
-    def plan(self, question: str) -> Plan:
+    # Shown in the response meta so a reader knows what produced the answer.
+    backend = "none"
+    model = "none"
+    stub = False
+
+    def plan(self, question: str, feedback: str | None = None) -> Plan:
         raise NotImplementedError
 
-    # The evidence type does not exist yet. It is defined when the pipeline is built.
-    def compose(self, question: str, evidence: list) -> str:
+    def compose(self, question: str, evidence: Evidence) -> str:
         raise NotImplementedError
 
 
 class OllamaLLM(LLM):
+    backend = "ollama"
+
     def __init__(
         self,
-        model: str = "qwen2.5:7b-instruct",
-        host: str = "http://localhost:11434",
+        model: str = DEFAULT_MODEL,
+        host: str = DEFAULT_HOST,
         timeout: float = 120.0,
     ) -> None:
         self.model = model
         self.host = host
         self.timeout = timeout
-        self.plan_prompt = (PROMPTS_DIR / f"{PROMPT_VERSION}.txt").read_text()
+        self.plan_prompt = (PROMPTS_DIR / f"{PLAN_PROMPT}.txt").read_text()
+        self.compose_prompt = (PROMPTS_DIR / f"{COMPOSE_PROMPT}.txt").read_text()
 
-    def plan(self, question: str) -> Plan:
+    def plan(self, question: str, feedback: str | None = None) -> Plan:
+        user_message = question
+        if feedback:
+            # The pipeline passes this when the validator rejected an earlier plan.
+            user_message += f"\n\nAn earlier plan for this question was rejected:\n{feedback}\nFix these problems."
+
         messages = [
             {"role": "system", "content": self.plan_prompt},
-            {"role": "user", "content": question},
+            {"role": "user", "content": user_message},
         ]
         last_error = None
 
@@ -65,14 +85,22 @@ class OllamaLLM(LLM):
 
         raise PlanError("The model did not return a valid plan after one retry.") from last_error
 
-    def _chat(self, messages: list[dict], schema: dict) -> str:
+    def compose(self, question: str, evidence: Evidence) -> str:
+        messages = [
+            {"role": "system", "content": self.compose_prompt},
+            {"role": "user", "content": f"QUESTION: {question}\nEVIDENCE\n{evidence_as_text(evidence)}\nANSWER:"},
+        ]
+        return self._chat(messages, schema=None).strip()
+
+    def _chat(self, messages: list[dict], schema: dict | None) -> str:
         payload = {
             "model": self.model,
             "messages": messages,
             "stream": False,
-            "format": schema,  # Ollama restricts the reply to this JSON shape
             "options": {"temperature": 0, "num_ctx": 8192},
         }
+        if schema is not None:
+            payload["format"] = schema  # Ollama restricts the reply to this JSON shape
         try:
             response = httpx.post(f"{self.host}/api/chat", json=payload, timeout=self.timeout)
             response.raise_for_status()
@@ -84,3 +112,23 @@ class OllamaLLM(LLM):
             raise LLMError(f"Ollama returned an error (status {error.response.status_code}).") from error
 
         return response.json()["message"]["content"]
+
+
+def evidence_as_text(evidence: Evidence) -> str:
+    """The evidence in the layout the compose prompt shows in its examples."""
+    blocks = []
+    if evidence.data is not None:
+        data = evidence.data
+        lines = [
+            "[data]",
+            f"How it was computed: {data.how_computed}",
+            f"Invoices matched: {data.matched_invoice_count}",
+            "Rows:" if data.rows else "Rows: none",
+        ]
+        if data.rows:
+            lines.append(render_rows(data.rows, MAX_ROWS_FOR_MODEL))
+        blocks.append("\n".join(lines))
+
+    for section in evidence.policy:
+        blocks.append(f"[policy {section.section_id}]\n{section.text}")
+    return "\n".join(blocks)

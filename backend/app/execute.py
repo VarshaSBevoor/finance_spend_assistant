@@ -110,6 +110,11 @@ def to_records(table: pd.DataFrame) -> list[dict]:
     return table.to_dict("records")
 
 
+def limit_is_per_currency(query: DataQuery) -> bool:
+    """A limit is applied per currency whenever the result has a currency column."""
+    return query.limit is not None and (query.aggregate == "rows" or "currency" in query.group_by)
+
+
 def describe_filter(one_filter: Filter) -> str:
     text = OPERATOR_TEXT[one_filter.op]
     if one_filter.op in ("is_null", "not_null"):
@@ -139,8 +144,7 @@ def describe_query(query: DataQuery) -> str:
         parts.append(f"Ordered by {value_name}, {direction} first.")
 
     if query.limit is not None:
-        per_currency = query.aggregate == "rows" or "currency" in query.group_by
-        if per_currency:
+        if limit_is_per_currency(query):
             parts.append(f"Limit of {query.limit} applied per currency, because currencies cannot be ranked against each other.")
         else:
             parts.append(f"Limit of {query.limit} applied.")
@@ -154,4 +158,5 @@ def run_data_query(invoices: pd.DataFrame, query: DataQuery) -> DataResult:
         rows=to_records(table),
         matched_invoice_count=len(filtered),
         how_computed=describe_query(query),
+        limit_per_currency=limit_is_per_currency(query),
     )

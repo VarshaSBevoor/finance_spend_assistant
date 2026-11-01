@@ -77,3 +77,26 @@ One entry per decision, five lines at most: what I decided, why, what else I con
 **Why:** The sets are larger and change with the data. A misspelt vendor returns no rows, and the answer says "no matching invoices".
 **Alternatives considered:** checking vendor names against the master.
 **Revisit if:** the eval set shows misspelt names are common.
+
+## M4: compose, verify, respond
+**Decision:** Verification is code with four checks: every number in a sentence must come from the evidence that sentence cites (or the question); every cited id must exist; every kind of evidence given must be cited; a per-currency top-N must say it is per currency. A failed check replaces the answer with a template built from the evidence.
+**Why:** A model checking a model can fail the same way. Code is exact and repeatable. A failed check gives a safe, plain answer instead of a confident wrong one.
+**Alternatives considered:** a second model call as a judge; one global "number appears somewhere" check (it let a policy figure be attributed to data); a rounding tolerance (not built, we measure first).
+**Revisit if:** the eval set shows misattribution inside one source, or many fallbacks from harmless wording.
+
+**Decision:** Hybrid answers. For results with more than 3 rows the model writes a short lead and code lists every row, grouped by currency, in order.
+**Why:** A verified answer once dropped a vendor and misordered a list, with every number real. Copying a table is mechanical, so code does it. It does not depend on this model's strength, and a stronger model writes a better lead.
+**Alternatives considered:** code writes all list answers (wastes a stronger model); a check that every row is mentioned (fragile); leaving it and documenting it.
+**Revisit if:** the eval set shows a stronger model lists rows reliably. The threshold is one constant, `LIST_ROW_THRESHOLD`.
+
+**Decision:** A failed plan, an out-of-scope question and a result with no matching invoices are declined with a reason, and `declined: true`. A model that is down is a 503, not a decline.
+**Why:** The analyst should see "I will not guess" differently from "the service is down".
+**Alternatives considered:** a 400 error for declines; a model-written refusal.
+**Revisit if:** the frontend wants more detail on why.
+
+**Decision:** Settings come from real environment variables, then a `.env` file read by a 15-line reader, then defaults. No dependency.
+**Why:** CLAUDE.md asks to avoid new dependencies without asking, and `.env` is the file the repo already lists as ignored.
+**Alternatives considered:** `python-dotenv`; shell variables only.
+**Revisit if:** the format grows beyond `KEY=value` lines.
+
+**Known limits, for the README:** the lead sentence can mislead with true numbers; a number can be used in the wrong claim inside one source; rounded figures and number words are not recognised; free-text columns are not checked against known values; the eval set is not built yet.

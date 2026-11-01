@@ -62,6 +62,7 @@ def test_limit_applies_per_currency_and_the_explanation_says_so():
     ]
     assert result.matched_invoice_count == 8
     assert "per currency" in result.how_computed
+    assert result.limit_per_currency
 
 
 def test_count_of_missing_po_is_a_single_row():
