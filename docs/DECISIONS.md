@@ -99,7 +99,7 @@ One entry per decision, five lines at most: what I decided, why, what else I con
 **Alternatives considered:** `python-dotenv`; shell variables only.
 **Revisit if:** the format grows beyond `KEY=value` lines.
 
-**Known limits, for the README:** the lead sentence can mislead with true numbers; a number can be used in the wrong claim inside one source; rounded figures and number words are not recognised; free-text columns are not checked against known values; the eval set is not built yet.
+**Known limits, for the README:** the lead sentence can mislead with true numbers; a number can be used in the wrong claim inside one source; rounded figures and number words are not recognised; free-text columns are not checked against known values; the eval set is not built yet (built later, see M8).
 
 ## M5: tests
 **Decision:** Keep 36 tests and name 8 as the headline tests. The rest are smaller guards for rules the README claims. CLAUDE.md asked for 5 to 8 focused tests, so this is a deliberate extension, agreed on 2026-11-01.

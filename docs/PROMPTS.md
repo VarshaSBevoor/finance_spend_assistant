@@ -80,6 +80,19 @@ I wrote the final draft, refined with Claude from a preflight conversation held 
 - **Expectations.** A short answer, and the rows in a form that is easy to scan. Keep everything else unchanged.
 - **What it led to.** A short answer plus a table under it, with fewer columns, grouped by currency.
 
+### A9. Building an honest eval set
+
+- **Task.** Build a small eval set with a scoring script. Refine my draft questions against the real data and policy, add candidates (including one that is meant to break the app), and design the scoring.
+- **Persona.** An evaluation engineer who treats an inflated score as worse than a low one.
+- **Expectations.**
+  - Check every question against the data and the policy before keeping it. Split questions that mix an answerable part and an unanswerable part.
+  - Compute the true answers independently of the app's own code, and compare evidence rows, not answer text.
+  - Lock a held-out half before the first run, and report it without tuning on it.
+  - Replace questions that appear in the plan prompt as examples, and mark how close each remaining one is.
+  - Score automatically what can be scored, and leave meaning (complete, not misleading) to a by-hand review.
+  - Read the results honestly, and record failures instead of fixing them to pass.
+- **What it led to.** 20 questions (10 tuning, 10 held-out), an independent truth file, a scorer, and a written account of what the eval found: a wrong answer that passed every check, a plan that cannot sort by date or show a requested column, and a decline for the wrong reason. Details are in the README under "Eval results".
+
 ## Part B: prompts the app sends to the model
 
 Both are plain text files in `backend/prompts/`. `PROMPT_VERSION` in the response meta names the pair in use: `plan_v3+compose_v2`.

@@ -144,8 +144,7 @@ The 26.3 s is the first question, which includes loading the model. The tuning s
 
 ## Time and next steps
 
-About 5.5 to 6 hours in total, by my own estimate from working time and notes. That is over the 3 to 4 hour box. The backend took the longest, mainly the plan step (getting a 7B model to produce reliable plans) and the query executor. Learning FastAPI and React while building is part of that time.
-
+About 5.5 to 6 hours in total, by my own estimate from working time and notes. That is over the 3 to 4 hour box. The backend took the longest, mainly the plan step (getting a 7B model to produce reliable plans) and the query executor.
 Next, in order. First the gaps the eval found (the time is my estimate, including tests):
 - **Sort by date (about 50 minutes).** Add an optional `sort_by` to the plan (amount or invoice date). Dates can be ranked across currencies, unlike amounts, so a date sort and limit must run across all rows, not per currency. The executor, the verifier flag for per-currency limits and the prompt change.
 - **Show a requested column (about 35 minutes).** Add an optional `show_columns` list to the plan, checked against the real column names, so "and what are the PO numbers" works.
