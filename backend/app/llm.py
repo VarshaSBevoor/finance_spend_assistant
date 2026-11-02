@@ -9,7 +9,7 @@ from app.schemas import Evidence
 from app.settings import DEFAULT_HOST, DEFAULT_MODEL
 
 # Bump the matching name whenever a prompt file changes. PROMPT_VERSION goes in the response meta.
-PLAN_PROMPT = "plan_v3"
+PLAN_PROMPT = "plan_v4"
 COMPOSE_PROMPT = "compose_v2"
 PROMPT_VERSION = f"{PLAN_PROMPT}+{COMPOSE_PROMPT}"
 PROMPTS_DIR = Path(__file__).resolve().parents[1] / "prompts"

@@ -8,17 +8,35 @@ OPERATOR_TEXT = {
     "in": "in", "is_null": "is missing", "not_null": "is present",
 }
 
-# A list of invoices shows these columns, plus any column the question filtered on.
+# A list of invoices shows these columns, plus any column the question asked to see or filtered on.
 # Thirteen columns per row is too much to read at a glance.
 CORE_ROW_COLUMNS = ["invoice_number", "invoice_date", "vendor_name", "amount", "currency"]
 
 
 def columns_for_rows(query: DataQuery) -> list[str]:
     columns = list(CORE_ROW_COLUMNS)
+    for column in query.show_columns:
+        if column not in columns:
+            columns.append(column)
     for one_filter in query.filters:
         if one_filter.column not in columns:
             columns.append(one_filter.column)
     return columns
+
+
+def comparable_text(column: pd.Series) -> pd.Series:
+    """Trim and lowercase a text column, so that "mgmt" finds "Mgmt". Other columns are returned as they are."""
+    if pd.api.types.is_string_dtype(column):
+        return column.str.strip().str.casefold()
+    return column
+
+
+def comparable_value(value):
+    if isinstance(value, str):
+        return value.strip().casefold()
+    if isinstance(value, list):
+        return [comparable_value(item) for item in value]
+    return value
 
 
 def apply_filters(invoices: pd.DataFrame, filters: list[Filter]) -> pd.DataFrame:
@@ -29,6 +47,11 @@ def apply_filters(invoices: pd.DataFrame, filters: list[Filter]) -> pd.DataFrame
         column = result[one_filter.column]
         value = one_filter.value
         op = one_filter.op
+
+        # People type names in any case. Missing values stay missing, so "not equal to X" still keeps them.
+        if op in ("eq", "ne", "in"):
+            column = comparable_text(column)
+            value = comparable_value(value)
 
         # Each branch builds a True/False value per row. True rows are kept.
         if op == "eq":

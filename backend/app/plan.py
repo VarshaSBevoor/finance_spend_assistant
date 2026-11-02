@@ -28,12 +28,21 @@ class DataQuery(BaseModel):
     aggregate: Literal["sum", "count", "rows"]
     sort: Literal["asc", "desc"] | None = None
     limit: int | None = Field(default=None, ge=1, le=100)
+    # Extra columns to show when listing invoices, such as po_number. Optional: leaving it out
+    # shows only the core columns, which is what most questions need.
+    show_columns: list[str] = []
 
     # Runs after the fields are checked. The error text goes back to the model on retry.
     @model_validator(mode="after")
     def rows_are_not_grouped(self):
         if self.aggregate == "rows" and self.group_by:
             raise ValueError("aggregate 'rows' lists invoices and cannot use group_by. Put conditions in filters.")
+        return self
+
+    @model_validator(mode="after")
+    def show_columns_need_rows(self):
+        if self.show_columns and self.aggregate != "rows":
+            raise ValueError("show_columns only works with aggregate 'rows', which lists invoices.")
         return self
 
 

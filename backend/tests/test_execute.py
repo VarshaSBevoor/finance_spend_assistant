@@ -106,3 +106,44 @@ def test_a_missing_value_is_its_own_group_when_grouping():
     # INV-3 has no approver. It must not vanish from the counts.
     counts = {row["approved_by"]: row["invoice_count"] for row in result.rows}
     assert counts == {"a": 4, "b": 3, None: 1}
+
+
+def test_text_filters_ignore_letter_case_and_spaces_around_the_value():
+    equals = make_query(filters=[{"column": "vendor_name", "op": "eq", "value": " alpha "}], aggregate="rows")
+    in_list = make_query(filters=[{"column": "vendor_name", "op": "in", "value": ["ALPHA", "beta"]}], aggregate="count")
+
+    equals_result = run_data_query(INVOICES, equals)
+    in_result = run_data_query(INVOICES, in_list)
+
+    # Alpha: INV-1, 2, 5. Beta: INV-3, 6.
+    assert sorted(row["invoice_number"] for row in equals_result.rows) == ["INV-1", "INV-2", "INV-5"]
+    assert in_result.matched_invoice_count == 5
+
+
+def test_not_equal_ignores_letter_case_but_still_counts_a_missing_approver():
+    query = make_query(filters=[{"column": "approved_by", "op": "ne", "value": "A"}], aggregate="count")
+
+    result = run_data_query(INVOICES, query)
+
+    # Approver "a" is excluded (4 invoices). INV-3 has no approver and stays, with INV-4, 6 and 7.
+    assert result.matched_invoice_count == 4
+
+
+def test_show_columns_adds_the_requested_columns_after_the_core_ones():
+    query = make_query(
+        filters=[{"column": "country", "op": "eq", "value": "France"}],
+        aggregate="rows",
+        sort="asc",
+    )
+    query = query.model_copy(update={"show_columns": ["po_number", "approved_by"]})
+
+    result = run_data_query(INVOICES, query)
+
+    # France: INV-3 (no approver) and INV-6 (no PO). The filter column comes last.
+    assert list(result.rows[0]) == [
+        "invoice_number", "invoice_date", "vendor_name", "amount", "currency", "po_number", "approved_by", "country",
+    ]
+    by_invoice = {row["invoice_number"]: row for row in result.rows}
+    assert by_invoice["INV-3"]["po_number"] == "PO-3" and by_invoice["INV-3"]["approved_by"] is None
+    assert by_invoice["INV-6"]["po_number"] is None  # a missing PO stays visible as None
+    assert "po_number" in result.how_computed

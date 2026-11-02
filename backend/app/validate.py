@@ -5,10 +5,10 @@ import pandas as pd
 from app.plan import Filter, Plan
 
 # Rules, in one place:
-# 1. Every column in a filter or group_by must exist.
+# 1. Every column in a filter, group_by or show_columns must exist.
 # 2. The operator must fit the column (gt/lt only on amount and date, is_null only on PO and approver).
 # 3. The value must fit the operator and the column (a number for amount, YYYY-MM-DD for date,
-#    a known value for currency, status, country and category).
+#    a known value for currency, status, country, category and approved_by).
 # 4. Every policy section id must exist.
 # 5. Repair: a "sum" always groups by currency, so amounts in different currencies are never added.
 COLUMNS = [
@@ -19,7 +19,8 @@ NUMBER_COLUMNS = ["amount"]
 DATE_COLUMNS = ["invoice_date"]
 NULLABLE_COLUMNS = ["po_number", "approved_by"]
 # Columns with a small set of values. The allowed values are read from the data.
-CLOSED_COLUMNS = ["currency", "status", "country", "category"]
+# approved_by is here so that an invented name such as "requester" is rejected, not matched to nothing.
+CLOSED_COLUMNS = ["currency", "status", "country", "category", "approved_by"]
 
 MATCH_OPS = ["eq", "ne", "in"]
 COMPARE_OPS = ["gt", "gte", "lt", "lte"]
@@ -41,6 +42,9 @@ def validate_plan(plan: Plan, invoices: pd.DataFrame, policy_ids: set[str]) -> t
         for column in query.group_by:
             if column not in COLUMNS:
                 problems.append(f"group_by column '{column}' does not exist. Use one of: {', '.join(COLUMNS)}.")
+        for column in query.show_columns:
+            if column not in COLUMNS:
+                problems.append(f"show_columns column '{column}' does not exist. Use one of: {', '.join(COLUMNS)}.")
 
     for section_id in plan.policy_sections:
         if section_id not in policy_ids:
@@ -90,8 +94,9 @@ def check_filter(one_filter: Filter, invoices: pd.DataFrame) -> list[str]:
             if not is_iso_date(item):
                 problems.append(f"'{column}' needs a date like 2025-03-09, got '{item}'.")
         elif column in CLOSED_COLUMNS:
-            allowed_values = sorted(invoices[column].unique())
-            if item not in allowed_values:
+            # A missing value is not a name to offer, and letter case is ignored like in execute.py.
+            allowed_values = sorted(invoices[column].dropna().unique())
+            if str(item).strip().casefold() not in [allowed.casefold() for allowed in allowed_values]:
                 problems.append(f"'{item}' is not a value of '{column}'. Use one of: {', '.join(allowed_values)}.")
     return problems
 

@@ -1,0 +1,759 @@
+{
+ "scores": [
+  {
+   "id": "count_q2",
+   "kind": "data",
+   "route_ok": true,
+   "decline_ok": true,
+   "sections_ok": null,
+   "data_ok": true,
+   "no_mixed_sum": null,
+   "declined": false,
+   "fallback_used": false,
+   "verified": true,
+   "seconds": 7.2,
+   "automatic_pass": true
+  },
+  {
+   "id": "latest_invoice",
+   "kind": "data",
+   "route_ok": true,
+   "decline_ok": true,
+   "sections_ok": null,
+   "data_ok": false,
+   "no_mixed_sum": null,
+   "declined": false,
+   "fallback_used": true,
+   "verified": false,
+   "seconds": 7.7,
+   "automatic_pass": false
+  },
+  {
+   "id": "paid_within_60_days",
+   "kind": "decline",
+   "route_ok": true,
+   "decline_ok": true,
+   "sections_ok": null,
+   "data_ok": null,
+   "no_mixed_sum": null,
+   "declined": true,
+   "fallback_used": false,
+   "verified": false,
+   "seconds": 9.1,
+   "automatic_pass": true
+  },
+  {
+   "id": "lineage_policy",
+   "kind": "policy",
+   "route_ok": true,
+   "decline_ok": true,
+   "sections_ok": true,
+   "data_ok": null,
+   "no_mixed_sum": null,
+   "declined": false,
+   "fallback_used": false,
+   "verified": true,
+   "seconds": 4.6,
+   "automatic_pass": true
+  },
+  {
+   "id": "uk_vendor_spend",
+   "kind": "data",
+   "route_ok": true,
+   "decline_ok": true,
+   "sections_ok": null,
+   "data_ok": true,
+   "no_mixed_sum": null,
+   "declined": false,
+   "fallback_used": false,
+   "verified": true,
+   "seconds": 11.1,
+   "automatic_pass": true
+  },
+  {
+   "id": "top3_vendors",
+   "kind": "data",
+   "route_ok": true,
+   "decline_ok": true,
+   "sections_ok": null,
+   "data_ok": true,
+   "no_mixed_sum": null,
+   "declined": false,
+   "fallback_used": false,
+   "verified": true,
+   "seconds": 16.8,
+   "automatic_pass": true
+  },
+  {
+   "id": "total_in_eur",
+   "kind": "probe",
+   "route_ok": true,
+   "decline_ok": true,
+   "sections_ok": null,
+   "data_ok": true,
+   "no_mixed_sum": true,
+   "declined": false,
+   "fallback_used": false,
+   "verified": true,
+   "seconds": 9.2,
+   "automatic_pass": true
+  },
+  {
+   "id": "finance_director_invoices",
+   "kind": "probe",
+   "route_ok": false,
+   "decline_ok": true,
+   "sections_ok": true,
+   "data_ok": null,
+   "no_mixed_sum": null,
+   "declined": false,
+   "fallback_used": false,
+   "verified": true,
+   "seconds": 7.4,
+   "automatic_pass": false
+  },
+  {
+   "id": "break_highest_currency",
+   "kind": "break",
+   "route_ok": true,
+   "decline_ok": true,
+   "sections_ok": null,
+   "data_ok": true,
+   "no_mixed_sum": true,
+   "declined": false,
+   "fallback_used": true,
+   "verified": false,
+   "seconds": 10.8,
+   "automatic_pass": true
+  },
+  {
+   "id": "break_biggest_vendor_overall",
+   "kind": "break",
+   "route_ok": true,
+   "decline_ok": true,
+   "sections_ok": null,
+   "data_ok": true,
+   "no_mixed_sum": null,
+   "declined": false,
+   "fallback_used": false,
+   "verified": true,
+   "seconds": 15.1,
+   "automatic_pass": true
+  }
+ ],
+ "responses": {
+  "count_q2": {
+   "answer": "48 invoices are dated in the second quarter of 2025 [data].",
+   "declined": false,
+   "route": "data",
+   "evidence": {
+    "policy": [],
+    "data": {
+     "rows": [
+      {
+       "invoice_count": 48
+      }
+     ],
+     "matched_invoice_count": 48,
+     "how_computed": "Filters: invoice_date >= 2025-04-01; invoice_date < 2025-07-01. Counted invoices.",
+     "limit_per_currency": false
+    }
+   },
+   "checks": [
+    {
+     "name": "plan_validated",
+     "passed": true,
+     "detail": "Only known columns, operators, values and policy sections."
+    },
+    {
+     "name": "numbers_in_evidence",
+     "passed": true,
+     "detail": "Every number is in the evidence its sentence cites, or in the question."
+    },
+    {
+     "name": "citations_exist",
+     "passed": true,
+     "detail": "Every cited source is in the evidence."
+    },
+    {
+     "name": "answer_is_cited",
+     "passed": true,
+     "detail": "The answer cites each kind of evidence it was given."
+    },
+    {
+     "name": "per_currency_stated",
+     "passed": true,
+     "detail": "No per-currency limit was applied."
+    }
+   ],
+   "meta": {
+    "backend": "ollama",
+    "model": "qwen2.5:7b-instruct",
+    "prompt_version": "plan_v4+compose_v2",
+    "stub": false,
+    "fallback_used": false
+   },
+   "seconds": 7.2
+  },
+  "latest_invoice": {
+   "answer": "140 invoices matched. Results: invoice_number: INV-20113, invoice_date: 2025-09-15, vendor_name: Helix Consulting AG, amount: 94,655.34, currency: EUR; invoice_number: INV-20094, invoice_date: 2025-04-08, vendor_name: ClinSupply Iberia S.L., amount: 94,145.29, currency: GBP; invoice_number: INV-20099, invoice_date: 2025-06-08, vendor_name: BioReagent Direct, amount: 91,737.87, currency: USD [data]. No filters, all invoices. Listed the matching invoices (columns: invoice_number, invoice_date, vendor_name, amount, currency). Ordered by amount, largest first. Limit of 1 applied per currency, because currencies cannot be ranked against each other.",
+   "declined": false,
+   "route": "data",
+   "evidence": {
+    "policy": [],
+    "data": {
+     "rows": [
+      {
+       "invoice_number": "INV-20113",
+       "invoice_date": "2025-09-15",
+       "vendor_name": "Helix Consulting AG",
+       "amount": 94655.34,
+       "currency": "EUR"
+      },
+      {
+       "invoice_number": "INV-20094",
+       "invoice_date": "2025-04-08",
+       "vendor_name": "ClinSupply Iberia S.L.",
+       "amount": 94145.29,
+       "currency": "GBP"
+      },
+      {
+       "invoice_number": "INV-20099",
+       "invoice_date": "2025-06-08",
+       "vendor_name": "BioReagent Direct",
+       "amount": 91737.87,
+       "currency": "USD"
+      }
+     ],
+     "matched_invoice_count": 140,
+     "how_computed": "No filters, all invoices. Listed the matching invoices (columns: invoice_number, invoice_date, vendor_name, amount, currency). Ordered by amount, largest first. Limit of 1 applied per currency, because currencies cannot be ranked against each other.",
+     "limit_per_currency": true
+    }
+   },
+   "checks": [
+    {
+     "name": "plan_validated",
+     "passed": true,
+     "detail": "Only known columns, operators, values and policy sections."
+    },
+    {
+     "name": "numbers_in_evidence",
+     "passed": true,
+     "detail": "Every number is in the evidence its sentence cites, or in the question."
+    },
+    {
+     "name": "citations_exist",
+     "passed": true,
+     "detail": "Every cited source is in the evidence."
+    },
+    {
+     "name": "answer_is_cited",
+     "passed": true,
+     "detail": "The answer cites each kind of evidence it was given."
+    },
+    {
+     "name": "per_currency_stated",
+     "passed": false,
+     "detail": "The result was limited per currency, but the answer does not say the ranking is per currency."
+    }
+   ],
+   "meta": {
+    "backend": "ollama",
+    "model": "qwen2.5:7b-instruct",
+    "prompt_version": "plan_v4+compose_v2",
+    "stub": false,
+    "fallback_used": true
+   },
+   "seconds": 7.7
+  },
+  "paid_within_60_days": {
+   "answer": "I could not turn that question into a valid query, so I did not guess. Try rephrasing it.",
+   "declined": true,
+   "route": "out_of_scope",
+   "evidence": {
+    "policy": [],
+    "data": null
+   },
+   "checks": [
+    {
+     "name": "plan_validated",
+     "passed": false,
+     "detail": "operator 'is_null' cannot be used on column 'invoice_date'. Allowed: eq, ne, in, gt, gte, lt, lte."
+    }
+   ],
+   "meta": {
+    "backend": "ollama",
+    "model": "qwen2.5:7b-instruct",
+    "prompt_version": "plan_v4+compose_v2",
+    "stub": false,
+    "fallback_used": false
+   },
+   "seconds": 9.1
+  },
+  "lineage_policy": {
+   "answer": "Automated systems that transform or aggregate data supporting financial reporting must maintain a traceable lineage from source to report, according to policy [policy 8.2].",
+   "declined": false,
+   "route": "policy",
+   "evidence": {
+    "policy": [
+     {
+      "section_id": "8.2",
+      "text": "8.2 Data supporting financial reporting is subject to internal controls testing (SOX-equivalent). Any automated system that transforms or aggregates this data must maintain a traceable lineage from source to report."
+     }
+    ],
+    "data": null
+   },
+   "checks": [
+    {
+     "name": "plan_validated",
+     "passed": true,
+     "detail": "Only known columns, operators, values and policy sections."
+    },
+    {
+     "name": "numbers_in_evidence",
+     "passed": true,
+     "detail": "Every number is in the evidence its sentence cites, or in the question."
+    },
+    {
+     "name": "citations_exist",
+     "passed": true,
+     "detail": "Every cited source is in the evidence."
+    },
+    {
+     "name": "answer_is_cited",
+     "passed": true,
+     "detail": "The answer cites each kind of evidence it was given."
+    },
+    {
+     "name": "per_currency_stated",
+     "passed": true,
+     "detail": "No per-currency limit was applied."
+    }
+   ],
+   "meta": {
+    "backend": "ollama",
+    "model": "qwen2.5:7b-instruct",
+    "prompt_version": "plan_v4+compose_v2",
+    "stub": false,
+    "fallback_used": false
+   },
+   "seconds": 4.6
+  },
+  "uk_vendor_spend": {
+   "answer": "Across 17 invoices, we spent EUR 329,108.73 (9 invoices), GBP 173,408.60 (5 invoices) and USD 70,695.24 (3 invoices) with vendors based in the UK [data]. The totals are given per currency because amounts in different currencies are never added together [data].",
+   "declined": false,
+   "route": "data",
+   "evidence": {
+    "policy": [],
+    "data": {
+     "rows": [
+      {
+       "currency": "EUR",
+       "total_amount": 329108.73,
+       "invoice_count": 9
+      },
+      {
+       "currency": "GBP",
+       "total_amount": 173408.6,
+       "invoice_count": 5
+      },
+      {
+       "currency": "USD",
+       "total_amount": 70695.24,
+       "invoice_count": 3
+      }
+     ],
+     "matched_invoice_count": 17,
+     "how_computed": "Filters: country = UK. Summed the amount for each currency. Amounts in different currencies are never added together.",
+     "limit_per_currency": false
+    }
+   },
+   "checks": [
+    {
+     "name": "plan_validated",
+     "passed": true,
+     "detail": "Only known columns, operators, values and policy sections."
+    },
+    {
+     "name": "numbers_in_evidence",
+     "passed": true,
+     "detail": "Every number is in the evidence its sentence cites, or in the question."
+    },
+    {
+     "name": "citations_exist",
+     "passed": true,
+     "detail": "Every cited source is in the evidence."
+    },
+    {
+     "name": "answer_is_cited",
+     "passed": true,
+     "detail": "The answer cites each kind of evidence it was given."
+    },
+    {
+     "name": "per_currency_stated",
+     "passed": true,
+     "detail": "No per-currency limit was applied."
+    }
+   ],
+   "meta": {
+    "backend": "ollama",
+    "model": "qwen2.5:7b-instruct",
+    "prompt_version": "plan_v4+compose_v2",
+    "stub": false,
+    "fallback_used": false
+   },
+   "seconds": 11.1
+  },
+  "top3_vendors": {
+   "answer": "The top 3 vendors by total spend in 2025 are:\n- BioReagent Direct with EUR 767,778.07 and USD 240,480.85\n- PharmaPrint Studios with EUR 721,133.08 and USD 143,052.91\n- Labtech Solutions GmbH with EUR 612,043.43 and USD 150,427.40 [data]. The ranking is per currency because amounts in different currencies are never added together [data].",
+   "declined": false,
+   "route": "data",
+   "evidence": {
+    "policy": [],
+    "data": {
+     "rows": [
+      {
+       "vendor_name": "BioReagent Direct",
+       "currency": "EUR",
+       "total_amount": 767778.07,
+       "invoice_count": 13
+      },
+      {
+       "vendor_name": "PharmaPrint Studios",
+       "currency": "EUR",
+       "total_amount": 721133.08,
+       "invoice_count": 11
+      },
+      {
+       "vendor_name": "Labtech Solutions GmbH",
+       "currency": "EUR",
+       "total_amount": 612043.43,
+       "invoice_count": 11
+      },
+      {
+       "vendor_name": "ClinSupply Iberia S.L.",
+       "currency": "GBP",
+       "total_amount": 428218.78,
+       "invoice_count": 8
+      },
+      {
+       "vendor_name": "PharmaPrint Studios",
+       "currency": "GBP",
+       "total_amount": 202618.32,
+       "invoice_count": 3
+      },
+      {
+       "vendor_name": "Quanta Cloud Services",
+       "currency": "GBP",
+       "total_amount": 177084.0,
+       "invoice_count": 4
+      },
+      {
+       "vendor_name": "BioReagent Direct",
+       "currency": "USD",
+       "total_amount": 240480.85,
+       "invoice_count": 3
+      },
+      {
+       "vendor_name": "Labtech Solutions GmbH",
+       "currency": "USD",
+       "total_amount": 150427.4,
+       "invoice_count": 3
+      },
+      {
+       "vendor_name": "PharmaPrint Studios",
+       "currency": "USD",
+       "total_amount": 143052.91,
+       "invoice_count": 3
+      }
+     ],
+     "matched_invoice_count": 140,
+     "how_computed": "No filters, all invoices. Summed the amount for each vendor_name, currency. Amounts in different currencies are never added together. Ordered by total amount, largest first. Limit of 3 applied per currency, because currencies cannot be ranked against each other.",
+     "limit_per_currency": true
+    }
+   },
+   "checks": [
+    {
+     "name": "plan_validated",
+     "passed": true,
+     "detail": "Only known columns, operators, values and policy sections."
+    },
+    {
+     "name": "numbers_in_evidence",
+     "passed": true,
+     "detail": "Every number is in the evidence its sentence cites, or in the question."
+    },
+    {
+     "name": "citations_exist",
+     "passed": true,
+     "detail": "Every cited source is in the evidence."
+    },
+    {
+     "name": "answer_is_cited",
+     "passed": true,
+     "detail": "The answer cites each kind of evidence it was given."
+    },
+    {
+     "name": "per_currency_stated",
+     "passed": true,
+     "detail": "The answer says the ranking is per currency."
+    }
+   ],
+   "meta": {
+    "backend": "ollama",
+    "model": "qwen2.5:7b-instruct",
+    "prompt_version": "plan_v4+compose_v2",
+    "stub": false,
+    "fallback_used": false
+   },
+   "seconds": 16.8
+  },
+  "total_in_eur": {
+   "answer": "The total spend in EUR is EUR 4,493,726.12, which is the sum of all EUR invoices [data]. The totals for other currencies are not combined with EUR [data].",
+   "declined": false,
+   "route": "data",
+   "evidence": {
+    "policy": [],
+    "data": {
+     "rows": [
+      {
+       "currency": "EUR",
+       "total_amount": 4493726.12,
+       "invoice_count": 89
+      },
+      {
+       "currency": "GBP",
+       "total_amount": 1182251.02,
+       "invoice_count": 27
+      },
+      {
+       "currency": "USD",
+       "total_amount": 1150445.53,
+       "invoice_count": 24
+      }
+     ],
+     "matched_invoice_count": 140,
+     "how_computed": "No filters, all invoices. Summed the amount for each currency. Amounts in different currencies are never added together.",
+     "limit_per_currency": false
+    }
+   },
+   "checks": [
+    {
+     "name": "plan_validated",
+     "passed": true,
+     "detail": "Only known columns, operators, values and policy sections."
+    },
+    {
+     "name": "numbers_in_evidence",
+     "passed": true,
+     "detail": "Every number is in the evidence its sentence cites, or in the question."
+    },
+    {
+     "name": "citations_exist",
+     "passed": true,
+     "detail": "Every cited source is in the evidence."
+    },
+    {
+     "name": "answer_is_cited",
+     "passed": true,
+     "detail": "The answer cites each kind of evidence it was given."
+    },
+    {
+     "name": "per_currency_stated",
+     "passed": true,
+     "detail": "No per-currency limit was applied."
+    }
+   ],
+   "meta": {
+    "backend": "ollama",
+    "model": "qwen2.5:7b-instruct",
+    "prompt_version": "plan_v4+compose_v2",
+    "stub": false,
+    "fallback_used": false
+   },
+   "seconds": 9.2
+  },
+  "finance_director_invoices": {
+   "answer": "Invoices valued at 50,000.01 to 250,000 EUR require Finance Director approval [policy 3].",
+   "declined": false,
+   "route": "policy",
+   "evidence": {
+    "policy": [
+     {
+      "section_id": "3",
+      "text": "| Invoice / PO Value (EUR) | Required Approver |\n|---|---|\n| Up to 5,000 | Cost Center Owner |\n| 5,000.01 \u2013 50,000 | Department Head |\n| 50,000.01 \u2013 250,000 | Finance Director |\n| Above 250,000 | CFO + Procurement Excellence review |"
+     }
+    ],
+    "data": null
+   },
+   "checks": [
+    {
+     "name": "plan_validated",
+     "passed": true,
+     "detail": "Only known columns, operators, values and policy sections."
+    },
+    {
+     "name": "numbers_in_evidence",
+     "passed": true,
+     "detail": "Every number is in the evidence its sentence cites, or in the question."
+    },
+    {
+     "name": "citations_exist",
+     "passed": true,
+     "detail": "Every cited source is in the evidence."
+    },
+    {
+     "name": "answer_is_cited",
+     "passed": true,
+     "detail": "The answer cites each kind of evidence it was given."
+    },
+    {
+     "name": "per_currency_stated",
+     "passed": true,
+     "detail": "No per-currency limit was applied."
+    }
+   ],
+   "meta": {
+    "backend": "ollama",
+    "model": "qwen2.5:7b-instruct",
+    "prompt_version": "plan_v4+compose_v2",
+    "stub": false,
+    "fallback_used": false
+   },
+   "seconds": 7.4
+  },
+  "break_highest_currency": {
+   "answer": "140 invoices matched. Results: currency: EUR, total_amount: 4,493,726.12, invoice_count: 89; currency: GBP, total_amount: 1,182,251.02, invoice_count: 27; currency: USD, total_amount: 1,150,445.53, invoice_count: 24 [data]. No filters, all invoices. Summed the amount for each currency. Amounts in different currencies are never added together. Ordered by total amount, largest first. Limit of 1 applied per currency, because currencies cannot be ranked against each other.",
+   "declined": false,
+   "route": "data",
+   "evidence": {
+    "policy": [],
+    "data": {
+     "rows": [
+      {
+       "currency": "EUR",
+       "total_amount": 4493726.12,
+       "invoice_count": 89
+      },
+      {
+       "currency": "GBP",
+       "total_amount": 1182251.02,
+       "invoice_count": 27
+      },
+      {
+       "currency": "USD",
+       "total_amount": 1150445.53,
+       "invoice_count": 24
+      }
+     ],
+     "matched_invoice_count": 140,
+     "how_computed": "No filters, all invoices. Summed the amount for each currency. Amounts in different currencies are never added together. Ordered by total amount, largest first. Limit of 1 applied per currency, because currencies cannot be ranked against each other.",
+     "limit_per_currency": true
+    }
+   },
+   "checks": [
+    {
+     "name": "plan_validated",
+     "passed": true,
+     "detail": "Only known columns, operators, values and policy sections."
+    },
+    {
+     "name": "numbers_in_evidence",
+     "passed": true,
+     "detail": "Every number is in the evidence its sentence cites, or in the question."
+    },
+    {
+     "name": "citations_exist",
+     "passed": true,
+     "detail": "Every cited source is in the evidence."
+    },
+    {
+     "name": "answer_is_cited",
+     "passed": true,
+     "detail": "The answer cites each kind of evidence it was given."
+    },
+    {
+     "name": "per_currency_stated",
+     "passed": false,
+     "detail": "The result was limited per currency, but the answer does not say the ranking is per currency."
+    }
+   ],
+   "meta": {
+    "backend": "ollama",
+    "model": "qwen2.5:7b-instruct",
+    "prompt_version": "plan_v4+compose_v2",
+    "stub": false,
+    "fallback_used": true
+   },
+   "seconds": 10.8
+  },
+  "break_biggest_vendor_overall": {
+   "answer": "BioReagent Direct is the biggest overall vendor, with a total of EUR 767,778.07 and USD 240,480.85 [data]. The ranking is per currency, so amounts in different currencies are not combined [data].",
+   "declined": false,
+   "route": "data",
+   "evidence": {
+    "policy": [],
+    "data": {
+     "rows": [
+      {
+       "vendor_name": "BioReagent Direct",
+       "currency": "EUR",
+       "total_amount": 767778.07,
+       "invoice_count": 13
+      },
+      {
+       "vendor_name": "ClinSupply Iberia S.L.",
+       "currency": "GBP",
+       "total_amount": 428218.78,
+       "invoice_count": 8
+      },
+      {
+       "vendor_name": "BioReagent Direct",
+       "currency": "USD",
+       "total_amount": 240480.85,
+       "invoice_count": 3
+      }
+     ],
+     "matched_invoice_count": 140,
+     "how_computed": "No filters, all invoices. Summed the amount for each vendor_name, currency. Amounts in different currencies are never added together. Ordered by total amount, largest first. Limit of 1 applied per currency, because currencies cannot be ranked against each other.",
+     "limit_per_currency": true
+    }
+   },
+   "checks": [
+    {
+     "name": "plan_validated",
+     "passed": true,
+     "detail": "Only known columns, operators, values and policy sections."
+    },
+    {
+     "name": "numbers_in_evidence",
+     "passed": true,
+     "detail": "Every number is in the evidence its sentence cites, or in the question."
+    },
+    {
+     "name": "citations_exist",
+     "passed": true,
+     "detail": "Every cited source is in the evidence."
+    },
+    {
+     "name": "answer_is_cited",
+     "passed": true,
+     "detail": "The answer cites each kind of evidence it was given."
+    },
+    {
+     "name": "per_currency_stated",
+     "passed": true,
+     "detail": "The answer says the ranking is per currency."
+    }
+   ],
+   "meta": {
+    "backend": "ollama",
+    "model": "qwen2.5:7b-instruct",
+    "prompt_version": "plan_v4+compose_v2",
+    "stub": false,
+    "fallback_used": false
+   },
+   "seconds": 15.1
+  }
+ }
+}

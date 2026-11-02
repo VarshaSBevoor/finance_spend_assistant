@@ -163,3 +163,28 @@ One entry per decision, five lines at most: what I decided, why, what else I con
 **Revisit if:** never for held-out. No held-out expectation was changed.
 
 **Known limits found by the eval (all in the README):** the plan cannot sort by date; rows cannot show a column the question asks for (PO numbers); "biggest purchase" can be read as a sum per approver; a plan that fails twice is declined with "try rephrasing", even when the real reason is missing data; a number check that drops the minus sign caught an invented link by luck; a sentence can omit a currency while every number is true.
+
+## M9: changes after the eval
+**Decision:** This reverses the M8 decision to "fix nothing". A hand test showed the case-insensitive fix exposed a worse failure (invoice numbers labelled as PO numbers), so the PO column was fixed too. Run 1 stays as the clean held-out result. The later held-out run is labelled "after the changes" and is not held-out, because the app was changed after the failures were seen.
+**Why:** A decline reads as "no invoices", which is honest. An answer that calls invoice numbers PO numbers is a false statement on a finance tool, and it was on the owner's own demo question.
+**Alternatives considered:** keep the M8 position and document it (cheaper, but leaves a mislabelling answer); undo the case fix (the lowercase question would be declined again).
+**Revisit if:** the eval becomes a release gate. Then the held-out half must not be edited after a failure.
+
+**Decision:** Text filters (`eq`, `ne`, `in`) compare after trimming spaces and ignoring letter case. Amounts, dates and missing values are unchanged, so "not equal to X" still keeps invoices with no approver.
+**Why:** "Stellar Facilities mgmt" matched nothing because the stored name is "Mgmt". Case is the most common difference in typing. This is the "revisit if the retry fails often on case" trigger from M3, reached by a hand test.
+**Alternatives considered:** a fuzzy match on names (would guess what the user meant, against the validate rule); normalising only in the validator (the executor would still compare exactly).
+**Revisit if:** two vendors differ only by letter case. The vendor master has 10 distinct names, so none does today.
+
+**Decision:** The plan has an optional `show_columns` list, allowed only for lists of invoices and checked against the real column names. Prompt `plan_v4`: one field line, one rule, one example. The example uses a different question and column (cost centre) from the eval questions.
+**Why:** Rows carried fixed columns plus the filter columns, so "and what are the PO numbers" could not be answered. Optional means the 10 earlier examples and the test plans stay as they are.
+**Alternatives considered:** a required key (consistent with the other four, but rewrites every example); adding po_number and approved_by to the core columns (a wider table, and M6 made it narrower on purpose); letting the model choose all columns.
+**Revisit if:** the model skips `show_columns` when it is needed. Then make it required.
+
+**Decision:** `approved_by` joins the closed columns: a filter value must be one of the known approvers, compared ignoring letter case. The same case-insensitive comparison now applies to currency, status, country and category.
+**Why:** The prompt change made "Did anyone approve their own purchase?" produce the filter `approved_by = requester`, which matched nothing, and the answer quoted policy 7.2 under "No invoices matched". Rerunning the eval caught it. A name that is not in the data is now rejected and sent back with the list of real names.
+**Alternatives considered:** a prompt example for self-approval (tunes on a held-out question, and every prompt change moves other answers, as this run showed); doing nothing and documenting the regression.
+**Revisit if:** approvers change often. The list is read from the data, so it does not go stale.
+
+**Result:** 43 tests (36, plus case-insensitive filters, `show_columns`, and the approver check). Held-out automatic score 5/10 in run 1 and 8/10 after the changes, which is not a clean comparison. A prompt edit fixed Stellar, improved two answers (one with a false reason: the credit note question says the policy does not define credit notes, and policy 6.1 does), and broke self-approval until the approver check was added. Latency doubled in the later runs, cause not found.
+
+**Still open:** the plan cannot sort by date; "biggest purchase" is read as a sum per approver; a plan that fails twice is declined with "try rephrasing" even when the data lacks the field; a sentence can omit a currency or list rows against the prompt rule.
