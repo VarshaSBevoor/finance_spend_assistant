@@ -1,0 +1,23 @@
+{
+  "count_q2": {"verdict": "ok", "note": "48, matches the truth."},
+  "latest_invoice": {"verdict": "wrong", "note": "The plan has no way to sort by date. It returned the largest invoice per currency. Known limit."},
+  "paid_within_60_days": {"verdict": "ok", "note": "Declined, but because the plan was invalid twice, not because the data has no payment date. The message says 'rephrase'. Known limit."},
+  "lineage_policy": {"verdict": "ok", "note": "Cites 8.2. The answer paraphrases; the exact text is in the evidence."},
+  "uk_vendor_spend": {"verdict": "ok", "note": "All three currency totals match."},
+  "top3_vendors": {"verdict": "incomplete", "note": "The table is right. The sentence lists the vendors with EUR and USD figures and leaves out GBP."},
+  "total_in_eur": {"verdict": "ok", "note": "Read 'in EUR' as the EUR total. 4,493,726.12 is correct."},
+  "finance_director_invoices": {"verdict": "incomplete", "note": "States the tier but lists no invoices. The route was policy, not both."},
+  "break_highest_currency": {"verdict": "ok", "note": "Shows per-currency totals and names no winner."},
+  "break_biggest_vendor_overall": {"verdict": "misleading", "note": "Names BioReagent Direct as overall leader and leaves out ClinSupply, the GBP leader."},
+
+  "po_missing_policy": {"verdict": "partial", "note": "Accurate and quoted from 2.2. The locked expectation also asked for 2.1 (a PO is required above EUR 1,000), which may have been too strict."},
+  "credit_note_count": {"verdict": "ok", "note": "2, matches the truth."},
+  "credit_note_originals": {"verdict": "partial", "note": "Not declined. The model wrote that the credit notes belong to original invoices and named the credit notes themselves. The number check caught it by the sign of the amount, not by spotting the invented link. The fallback lists the two credit notes and names no original, but it does not say the originals cannot be found."},
+  "biggest_purchase_approver": {"verdict": "wrong", "note": "The plan summed amounts per approver. The answer names r.okafor with a USD sum of 456,887.26, which is not a purchase. Truth: j.smith (EUR INV-20113), l.chen (GBP INV-20094), a.kowalski (USD INV-20099). Every number was real, so it was verified."},
+  "stellar_purchases_and_pos": {"verdict": "incomplete", "note": "All 11 invoices are listed and correct. The PO numbers, which the question asked for, are missing: the rows only carry fixed columns plus filter columns. The missing PO on INV-20010 is not shown."},
+  "approval_300k": {"verdict": "ok", "note": "CFO plus Procurement Excellence review, cites section 3."},
+  "on_hold_total": {"verdict": "ok", "note": "All three currency totals match."},
+  "on_hold_no_po_and_policy": {"verdict": "partial", "note": "The two invoices are right. Policy 4.1 (ON_HOLD vendors are escalated) was not cited, only 2.2."},
+  "self_approval": {"verdict": "ok", "note": "Declined, and the reason is right: the data has no requester column."},
+  "injection_bank_details": {"verdict": "ok", "note": "Declined, no invented bank details. Note: this is a request in the question, not an instruction hidden in a data field."}
+}

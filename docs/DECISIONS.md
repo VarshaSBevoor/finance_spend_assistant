@@ -130,3 +130,36 @@ One entry per decision, five lines at most: what I decided, why, what else I con
 
 **Decision:** The fallback answer for a long result (more than 3 rows) says "The N result rows are in the evidence table" and does not retype them. Short results (3 rows or fewer) are still written out.
 **Why:** Same reason as above, and the fallback must still pass its own verification (N is the number of rows, which is in the evidence).
+
+## M8: eval set
+**Decision:** 20 questions: 10 tuning and 10 held-out. The held-out half was fixed before any run and run once. The tuning half was for looking at failures and fixing the app.
+**Why:** If we keep only the questions that pass after tuning, the score is inflated. A locked half cannot be gamed by our own fixes.
+**Alternatives considered:** one set of about 12 (simpler, but no honest number); a second held-out batch (not needed for the brief, which asks for 5 to 10 pairs).
+**Revisit if:** the eval is used to gate releases. Then it needs more questions and a second reviewer.
+
+**Decision:** True answers come from `eval/truth.py`, plain pandas that imports nothing from `app/`. The scorer compares the evidence rows with the true rows, not the answer text.
+**Why:** A bug in the app's loader or executor must not also be inside the answer key. Text matching would pass a right-sounding answer with wrong rows.
+**Alternatives considered:** reusing the app's executor to compute truth (faster to write, but one bug could be wrong in both places and still pass); comparing numbers in the answer text.
+**Revisit if:** the app's query language grows so much that the truth file becomes a second copy of it.
+
+**Decision:** Two levels of scoring. Automatic checks: route, decline, sections, evidence rows, no mixed-currency sum, verified, fallback, latency. By hand: whether the sentence is complete and not misleading, recorded in `manual_review.json`.
+**Why:** The verifier cannot judge meaning, and the eval showed it: on the held-out set, 4 of the 7 answers that passed the verifier were not fully right. An automatic score alone would have hidden that.
+**Alternatives considered:** another model as the judge (adds a second unreliable model, and it was not wanted); automatic checks only.
+**Revisit if:** there are enough questions that by-hand review does not scale. Then use a sampled review with two reviewers.
+
+**Decision:** Three questions from the brief were not used as they are, because they appear word for word as examples in `plan_v3.txt` (top 5 vendors, spend in Spain, who approves EUR 60,000). They were replaced with variants (top 3, the UK, EUR 300,000). Each question has a `seen_in_prompts` field (none, near).
+**Why:** Scoring a question the model has seen in its prompt measures memory, not skill. Four held-out questions are still `near` an example, and the README says so.
+**Alternatives considered:** keep the brief's questions (they look like the obvious test).
+**Revisit if:** the prompt examples change. Then the field must be checked again.
+
+**Decision:** Fix nothing after the eval. The gaps it found are documented in the README with an estimated fix for each.
+**Why:** The project was already over the 3 to 4 hour box. Two fixes would have added about 1.5 hours. Changing the plan model, the executor and the prompt the day before sending adds risk with a 7B model. A gap that the eval found and that is explained is a clearer statement than a rushed fix. Stellar (held-out) would also have stopped being held-out after a fix.
+**Alternatives considered:** fix the PO column only (about 35 minutes); fix both (about 1 hour 15 minutes, plus a rerun of all 20 questions).
+**Revisit if:** the repo is worked on after the interview. The order is in the README under "Time and next steps".
+
+**Decision:** One expected section on a tuning question was removed after run 1 (5.1 for "total spend in EUR"). It is recorded in the question file and in the README.
+**Why:** It was my guess, and it was too strict: the answer, a plain EUR total, is correct without it. The tuning table shows the score as it was run.
+**Alternatives considered:** leave it and report a failure that was not one.
+**Revisit if:** never for held-out. No held-out expectation was changed.
+
+**Known limits found by the eval (all in the README):** the plan cannot sort by date; rows cannot show a column the question asks for (PO numbers); "biggest purchase" can be read as a sum per approver; a plan that fails twice is declined with "try rephrasing", even when the real reason is missing data; a number check that drops the minus sign caught an invented link by luck; a sentence can omit a currency while every number is true.
