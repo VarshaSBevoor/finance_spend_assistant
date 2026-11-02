@@ -2,96 +2,53 @@
 
 Two kinds of prompts are in this project.
 
-- **Part A:** the key technical prompts given to the coding assistant (Claude Code), including the standing instructions in `CLAUDE.md`. Each one is stated in a structured form: task, persona, expectations, and what it led to. The wording is tightened for this log. The opening prompt is kept as originally written.
+- **Part A:** the key prompts given to the coding assistant (Claude Code). A0 is the real standing instruction file and A1 is my opening prompt, word for word. A2 to A9 are short summaries, written afterwards, of what I asked at those points, using the plans and steps we agreed on. They are not word for word.
 - **Part B:** the prompts the app sends to the model at run time. They live in `backend/prompts/` as versioned files.
 
 ## Part A: prompts to the coding assistant
 
 ### A0. Standing instructions: `CLAUDE.md`
 
-I wrote the final draft, refined with Claude from a preflight conversation held before any code. It is read at the start of every session.
-
-- **Task.** Build a small web app where a finance analyst asks questions about vendor invoices and a procurement policy, and sees the answer with its evidence. FastAPI, React, a local model through Ollama. About 3 to 4 hours of focused build.
-- **Persona.** A pair programmer in learning mode. The developer must be able to explain every line.
-- **Expectations.**
-  - Follow the decided architecture: plan, validate, execute, compose, verify, respond. The code computes, the model explains, the UI shows receipts.
-  - The model never does arithmetic and never writes quotes. Never add amounts across currencies. Handle missing PO and approver as real values.
-  - State a plan of at most 8 lines and wait for approval. Write one small piece at a time, then explain it in 3 to 5 plain sentences with one trade-off and the terms a beginner may not know.
-  - No new dependency, file or feature without asking. The developer makes the git commits.
-  - After each milestone: run the tests, list what the developer should be able to explain, and update `docs/AI_USAGE.md` and `docs/DECISIONS.md`.
-  - If something is uncertain, check the file or the documentation. Plain English, and every claim in the README must be true.
+I wrote the final draft, refined with Claude from a preflight conversation held before any code. Claude Code reads it at the start of every session. It fixes the scope (`POST /ask`, `GET /summary`, a chat panel, a summary panel, a few tests, one stretch item) and the architecture: plan, validate, execute, compose, verify, respond, with the rule that code computes, the model explains and the UI shows receipts. It also sets data rules (never add amounts across currencies, missing PO and approver are real values) and a way of working: state a short plan and wait for my go, write one small piece at a time and explain it, add no dependency, file or feature without asking, tell me before installs or deletes, and I make the git commits. After each milestone: run the tests, list what I should be able to explain, and update `docs/AI_USAGE.md` and `docs/DECISIONS.md`.
 
 ### A1. Opening prompt
 
 > Let's build a finance spend intelligence agent as part of an interview assignment.
 > Read CLAUDE.md and reference/assignment_brief.pdf. Do not write code yet. Tell me in your own words: what we are building, the six pipeline steps, what is out of scope, and how we will work together. Then propose the milestone checklist with a time budget for each and wait for my go.
 
-- **Task.** Read the working agreement and the brief, then restate the project: what is built, the six pipeline steps, what is out of scope, and how the work is done. Propose milestones with time budgets.
-- **Persona.** A senior engineer who confirms understanding before writing anything.
-- **Expectations.** No code yet. A restatement in the assistant's own words. A milestone list with a budget for each. Wait for approval.
-- **What it led to.** The milestone plan M0 to M7, and a note that the brief was at the project root and not at the path in the prompt. It now lives in `reference/`, so the path in the prompt is correct.
+This led to the milestone plan M0 to M7, and a note that the brief was at the project root and not at the path in the prompt. It now lives in `reference/`, so the path in the prompt is correct.
 
 ### A2. Choosing the local model
 
-- **Task.** Recommend one Ollama model for this project, given the machine and Ollama's own setup instructions.
-- **Persona.** A pragmatic engineer who checks the hardware and the documentation instead of guessing.
-- **Expectations.** Check memory and GPU against the docs. Compare local and cloud models with reasons. Do not sign in or use any API key. Say what was not verified. The model must support JSON-schema output, because the plan step depends on it.
-- **What it led to.** `qwen2.5:7b-instruct`, run locally.
+I had just installed Ollama and pasted its setup instructions, which say not to sign in or use an API key. I asked which model to pull for this project, given what we are building. The plan step needs JSON-schema output, so the model had to support it. This led to `qwen2.5:7b-instruct`, run locally.
 
 ### A3. Reproducible installs
 
-- **Task.** Pin every dependency to an exact version, because the repository is public and reviewers must be able to reproduce it.
-- **Persona.** A maintainer who expects a stranger to clone and run the repo.
-- **Expectations.** Exact versions in `requirements.txt` and, for the frontend, in `package.json` with a lock file. State what pinning does not cover (the dependencies of the dependencies). Choose versions at least two weeks old.
-- **What it led to.** Pinned backend and frontend packages. The setup was later run from a fresh clone.
+I asked to pin every dependency version, because the repository will be public and the panel should be able to reproduce the app. This led to exact versions in `requirements.txt` and in `package.json` with a lock file, a note that pinning does not cover the dependencies of the dependencies, and later a check from a fresh clone.
 
 ### A4. Reviewing the verifier
 
-- **Task.** Review the stated limitations of the answer verifier: whether known facts (such as the vendor count in the vendor master) would reduce misattributed numbers, whether rounded figures could be matched to the closest real figure, and why an answer with no citation passes.
-- **Persona.** A sceptical reviewer who tests whether each stated limitation is real.
-- **Expectations.** For each point: what would help, what would not and why, the cost, and a recommendation. Admit gaps instead of defending the design.
-- **What it led to.** A per-sentence number check (a figure must come from the evidence the sentence cites), a rule that every kind of evidence must be cited, and a decision not to recognise number words.
+Once the verifier was written I asked about its limits instead of accepting them. Could a known fact, such as the vendor count in the vendor master, stop a number being attributed to the wrong thing? Could a rounded figure be matched to the closest real number? Why did an answer with no citation pass? I asked for honest answers on what would help, what would not, and what each would cost. This led to a per-sentence number check, a rule that every kind of evidence must be cited, and a decision not to add a rounding tolerance or recognise number words.
 
 ### A5. Answers that pass verification but are wrong
 
-- **Task.** Investigate answers that pass every check and are still wrong, and propose a fix.
-- **Persona.** A reviewer who treats correctness, not a passing check, as the goal.
-- **Expectations.** Explain why the checks missed it, offer options with their costs, and recommend one.
-- **What it led to.** A live case: a "top 5" answer that dropped a vendor and misordered the rest while every number was real. Verification checks numbers and citations, not completeness. The options are in `docs/DECISIONS.md`.
+A live "top 5" answer dropped a GBP vendor and misordered the rest while every number in it was real, so it passed. I said I was not happy with verified but wrong answers and asked for options with their costs. The options are in `docs/DECISIONS.md`.
 
 ### A6. Keep the design independent of the model's strength
 
-- **Task.** Make sure the fix does not hard-wire the weaknesses of the small model used today.
-- **Persona.** An architect who wants the design to survive a model upgrade.
-- **Expectations.** Split the responsibilities. Code does what must never vary (produce the rows). The model does what improves with a better model (summarise). The model stays swappable through a setting.
-- **What it led to.** The hybrid answer: the model writes a short lead, and code produces the rows and the table.
+I pushed back on the first fix. If code writes every list answer, the design is built around a weak model and leaves no room for a better one. I asked for a split: code does what must never vary, and the model does what improves with a better model, with the model swappable through a setting. This led to the hybrid answer: the model writes a short lead, and code produces the rows and the table. I then asked to continue with `pipeline.py` and `/ask`.
 
 ### A7. Code level
 
-- **Task.** Keep the Python at a beginner to intermediate level.
-- **Persona.** A developer who must be able to explain every line.
-- **Expectations.** Plain functions, simple loops and explicit code. Explain any advanced feature before using it.
-- **What it led to.** A rule in `CLAUDE.md`, and a simpler `plan.py` (a shared base class was replaced by repeated lines).
+I asked to keep the Python at a beginner to intermediate level, because I must be able to explain every line: plain functions, simple loops and explicit code, and an explanation before any advanced feature. This became a rule in `CLAUDE.md` and led to a simpler `plan.py`, where a shared base class was replaced by repeated lines.
 
 ### A8. Readable answers
 
-- **Task.** Redesign how a long result is shown.
-- **Persona.** An analyst who has to check an answer at a glance.
-- **Expectations.** A short answer, and the rows in a form that is easy to scan. Keep everything else unchanged.
-- **What it led to.** A short answer plus a table under it, with fewer columns, grouped by currency.
+After trying the screen I said a long answer was too text heavy, with the rows retyped as `key: value` text. I asked for a short answer with the rows in a table that can be scanned at a glance, and for everything else to stay the same. This led to a short answer with a table under it, grouped by currency, with fewer columns.
 
-### A9. Building an honest eval set
+### A9. Building an eval set
 
-- **Task.** Build a small eval set with a scoring script. Refine my draft questions against the real data and policy, add candidates (including one that is meant to break the app), and design the scoring.
-- **Persona.** An evaluation engineer who treats an inflated score as worse than a low one.
-- **Expectations.**
-  - Check every question against the data and the policy before keeping it. Split questions that mix an answerable part and an unanswerable part.
-  - Compute the true answers independently of the app's own code, and compare evidence rows, not answer text.
-  - Lock a held-out half before the first run, and report it without tuning on it.
-  - Replace questions that appear in the plan prompt as examples, and mark how close each remaining one is.
-  - Score automatically what can be scored, and leave meaning (complete, not misleading) to a by-hand review.
-  - Read the results honestly, and record failures instead of fixing them to pass.
-- **What it led to.** 20 questions (10 tuning, 10 held-out), an independent truth file, a scorer, and a written account of what the eval found: a wrong answer that passed every check, a plan that cannot sort by date or show a requested column, and a decline for the wrong reason. Details are in the README under "Eval results".
+I wrote five draft questions (invoices without a PO, payment within 60 days, credit notes and their originals, policy lineage, who approved the biggest purchase) and asked to refine them against the real data and policy, add more, include one question that would break the app, try them, design a scoring system and choose the final set after testing. We agreed on 20 questions with a 10 and 10 split, the held-out half locked before any run, true answers computed in pandas apart from the app's code, and a scorer that compares evidence rows, not answer text. After the tuning half showed gaps in the plan format, I decided to document them as limits and next steps instead of fixing them, because of the time already spent. I read and approved the by-hand verdicts. Details are in the README under "Eval results".
 
 ## Part B: prompts the app sends to the model
 

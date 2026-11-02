@@ -36,7 +36,7 @@ npm run dev
 
 Open **http://localhost:5173**. Vite listens on `localhost`, so if `127.0.0.1` does not work, use `localhost`. The dev server forwards `/summary` and `/ask` to the backend on port 8000, so the backend needs no CORS setup.
 
-- **Speed.** Answers take a few seconds, up to about 15 s for longer questions. The first question after a pause can take 30 to 40 s while Ollama loads the model.
+- **Speed.** Answers take a few seconds, up to about 20 s for longer questions. The first question after a pause can take 30 to 40 s while Ollama loads the model.
 - **Settings.** Optional. A `.env` file at the repository root, or real environment variables (which win over the file): `OLLAMA_MODEL=qwen2.5:7b-instruct` and `OLLAMA_HOST=http://localhost:11434`.
 - **Tests.** `cd backend && python -m pytest`. 36 tests, a few seconds, no Ollama needed. Pytest prints one warning from Starlette: `Using httpx with starlette.testclient is deprecated; install httpx2 instead`. I left it. Replacing the dependency late adds more risk than the warning costs.
 - **Eval.** `cd backend && python eval/run_eval.py tune` (or `heldout`). Needs Ollama running, takes about 2 minutes, and is not part of the pytest suite. Results are below.
@@ -70,7 +70,7 @@ Open **http://localhost:5173**. Vite listens on `localhost`, so if `127.0.0.1` d
 
 ### 1. What I built and what I left out
 
-I built the whole path from a question to a checked answer with its evidence: the six steps above, a summary panel, a chat panel and an evidence panel. I put my time into grounding and failure handling, not polish: a verifier with four checks, a fallback answer, declines, and tests that I proved fail when the code is broken (12 deliberate breaks, all caught), and a small eval set with a scoring script (20 questions, results below).
+I built the whole path from a question to a checked answer with its evidence: the six steps above, a summary panel, a chat panel and an evidence panel. I put my time into grounding and failure handling, not polish: a verifier with four checks, a fallback answer, declines, and tests that I proved fail when the code is broken (12 deliberate breaks, all caught, by a one-off script that is not kept in the repo), and a small eval set with a scoring script (20 questions, results below).
 
 Left out, and why: auth, deployment, CI/CD and Docker (the brief says not to); a vector database (the policy is about 50 lines and fits in context); streaming, chat history, a cancel button and polish (not needed to show the design); a currency rate table (I have no ECB rates, and invented ones would give numbers I could not defend).
 
@@ -120,7 +120,7 @@ The 26.3 s is the first question, which includes loading the model. The tuning s
 - **The plan cannot sort by date** (tuning). "Which invoice has the latest invoice date?" returned the largest invoice per currency, because `sort` always means the amount. The receipts say "Ordered by amount", but the answer does not match the question.
 - **A decline for the wrong reason** (tuning). "How many invoices were paid within 60 days of receipt?" is declined, because the data has no payment date. But the app got there because the plan was invalid twice, and the message says "try rephrasing", which would send the user in circles.
 - **A question that should be declined was answered** (held-out). "Which original invoices do the credit notes belong to?" has no answer in the data. The model wrote that the credit notes belong to original invoices and named the credit notes themselves. The verifier rejected the sentence because the model dropped the minus sign on the amounts, not because it saw the invented link. The fallback lists the two credit notes and names no original, so nothing false is shown, but it does not say the originals cannot be found.
-- **A sentence can leave out a currency while every number stays true** (tuning: "top 3 vendors" and "biggest vendor overall"). The table under the answer is right, the sentence is not complete.
+- **A sentence can leave out a currency while every number stays true** (tuning: "top 3 vendors" and "biggest vendor overall"). The table under the answer is right, the sentence is not complete. The compose prompt says not to list rows when there are more than 3, but this is a prompt rule, not enforced: of the 2 answers with more than 3 rows that kept the model's text, both listed rows anyway (the 11 Stellar invoices, and the top 3 as bullets).
 - **Two policy answers were narrower than I expected** (held-out). Both are accurate quotes, but the PO question cites 2.2 and not 2.1, and the ON_HOLD question cites 2.2 and not 4.1.
 
 **How to read these numbers.** Twenty questions is too few for a rate: one question moves a score by 10 points. I wrote the questions knowing where the app is weak, so they probably look worse than a random set. Four held-out questions are close to examples in the plan prompt (the PO policy, the EUR 300,000 approval, the ON_HOLD with no PO, and the self-approval questions), so those may score better than a fresh question would. The injection question is typed into the question and is not an instruction hidden in a data field, which is the real risk. The by-hand verdicts are one reader's judgment.
@@ -145,6 +145,7 @@ The 26.3 s is the first question, which includes loading the model. The tuning s
 ## Time and next steps
 
 About 5.5 to 6 hours in total, by my own estimate from working time and notes. That is over the 3 to 4 hour box. The backend took the longest, mainly the plan step (getting a 7B model to produce reliable plans) and the query executor.
+
 Next, in order. First the gaps the eval found (the time is my estimate, including tests):
 - **Sort by date (about 50 minutes).** Add an optional `sort_by` to the plan (amount or invoice date). Dates can be ranked across currencies, unlike amounts, so a date sort and limit must run across all rows, not per currency. The executor, the verifier flag for per-currency limits and the prompt change.
 - **Show a requested column (about 35 minutes).** Add an optional `show_columns` list to the plan, checked against the real column names, so "and what are the PO numbers" works.
@@ -162,7 +163,7 @@ I built this with Claude Code in VS Code, in small reviewed steps. I set the arc
 - `CLAUDE.md`: the working agreement and the architecture. I wrote the final draft, refined with Claude from a preflight conversation, before any code.
 - `docs/AI_USAGE.md`: what was asked, what was generated, what was changed or got wrong, and what was verified, for each milestone.
 - `docs/DECISIONS.md`: the decisions and the alternatives I considered.
-- `docs/PROMPTS.md`: the key prompts to the assistant (task, persona, expectations), and the prompts the app sends to the model.
+- `docs/PROMPTS.md`: the key prompts to the assistant (summaries, with the opening prompt word for word), and the prompts the app sends to the model.
 - `backend/prompts/`: the prompts the app sends to the model, as versioned files (`plan_v1` to `plan_v3`, `compose_v1` and `compose_v2`). The versions in use are `plan_v3` and `compose_v2`.
 
 ## Project layout

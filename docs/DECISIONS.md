@@ -124,7 +124,7 @@ One entry per decision, five lines at most: what I decided, why, what else I con
 
 ## M6: rows are shown as a table, not retyped into the answer
 **Decision:** The answer text is the model's short lead only. The rows are not written into it. The UI shows the rows as a table directly under the answer, built from `evidence.data.rows` (code-made, complete, in order), with a heading row per currency when there is more than one. A list of invoices carries 5 core columns (invoice number, date, vendor, amount, currency) plus any column the question filtered on, not all 13.
-**Why:** A user test found the retyped rows a wall of `key: value` text that repeated the evidence table and could not be read at a glance. The guarantee is unchanged: the model cannot drop or reorder rows, because it never writes them. A reader scans a table far faster than text.
+**Why:** A user test found the retyped rows a wall of `key: value` text that repeated the evidence table and could not be read at a glance. The table is complete and in order because code builds it. The lead is asked not to list rows, but that is a prompt rule and is not enforced: in the eval, 2 of the 2 answers with more than 3 rows that were not replaced by the fallback listed rows anyway (11 invoices in one, a bulleted list that left out GBP in the other). A reader scans a table far faster than text.
 **Alternatives considered:** keep rows in the answer text (what we had); show all 13 columns (too much); let the model choose columns (can drop the one that matters).
 **Revisit if:** an API client needs the rows inside the answer string. They are in `evidence.data.rows`. Hidden columns (description, cost centre, category) are still in the CSV, but not shown in the evidence.
 

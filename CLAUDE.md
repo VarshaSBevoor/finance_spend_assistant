@@ -51,8 +51,8 @@ Prompts live in `backend/prompts/` as files, with a `PROMPT_VERSION` constant re
 - Tests: five to eight focused ones (summary totals against a hand calculation; the query function on a small frame; plan validation rejects a bad column; verification catches an invented number; `/ask` returns the contract shape through FastAPI's test client; an out-of-scope question is declined).
 - Frontend: plain React with hooks. A small `api.js` for fetch with a timeout and error shaping. Show loading, error with retry, empty, and answered states. Disable sending while a request is in flight. Effects that fetch must clean up so stale responses cannot overwrite fresh ones. No component library.
 
-## How we work (learning mode)
-I am learning FastAPI and React while building this, and I must be able to explain every line to an interviewer.
+## How we work
+I must be able to explain every line to an interviewer.
 1. Before writing code for a task, state the plan in plain words (at most 8 lines) and wait for my go.
 2. Write one small piece at a time (one function or one file). After each piece, explain in 3 to 5 plain sentences what it does and why, give one trade-off, and define any term a beginner may not know.
 3. Do not add features, abstractions or files I did not ask for. If you notice something worth adding, put it in a "Later" list.
