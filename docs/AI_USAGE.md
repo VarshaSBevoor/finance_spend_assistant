@@ -2,7 +2,7 @@
 
 Tools: Claude Code in VS Code. The model the app itself calls is described in the README.
 
-`CLAUDE.md` is my own working agreement. I wrote the final draft, refined with Claude, from a preflight conversation held before any code. It fixes the scope, the six-step pipeline and its rules (code computes, the model explains, the UI shows receipts), and the way of working: one small piece at a time, a plain explanation after each, a mode where I write and the assistant reviews, and I make the git commits. I added one rule later: Python at a beginner to intermediate level.
+`CLAUDE.md` is the working agreement for this project. The first draft of `CLAUDE.md` and the architecture came from a planning conversation with Claude before any code. I adopted them after looking at the alternatives in `docs/DECISIONS.md`, then edited them and made the later design decisions, which are logged. `CLAUDE.md` fixes the scope, the six-step pipeline and its rules (code computes, the model explains, the UI shows receipts), and the way of working: one small piece at a time, a plain explanation after each, a mode where I write and the assistant reviews, and I make the git commits.
 
 ## Log
 
@@ -23,7 +23,7 @@ One row per milestone. The last column says what went wrong and who found it, be
 
 ## What I wrote myself
 
-- **CLAUDE.md.** The scope, the architecture and its rules, and the way of working. I wrote the final draft, refined with Claude from a preflight conversation, before any code.
+- **CLAUDE.md, edited and adopted.** The first draft came from a planning conversation with Claude. I edited it and adopted its scope, architecture and way of working.
 - **First drafts** of `main.py` (the `GET /summary` route) and of an `execute.py` skeleton. Both were reviewed and then built out in small steps.
 - **The design decisions** in `docs/DECISIONS.md`: no rate table, per-currency limits, one retry for a rejected plan, a stricter verifier, the hybrid answer, our own `.env` reader, 36 tests with 8 headline tests, and the eval set as the one extra.
 - **The first eval questions** (PO handling, payment terms, credit notes, policy lineage, the biggest purchase), the vendor question, and the decision to fix nothing after the eval and document the gaps.

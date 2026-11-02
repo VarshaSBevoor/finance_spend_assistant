@@ -6,7 +6,7 @@ The idea: **code computes, the model explains, the UI shows receipts.** The mode
 
 ## Which LLM path I took
 
-A local model through **Ollama**: `qwen2.5:7b-instruct` (about 4.7 GB). No API key and no stub in the app. The fake model used by the tests lives in `backend/tests/` only. Every response reports the model and the prompt version that produced it.
+A local model through **Ollama**: `qwen2.5:7b-instruct` (about 4.7 GB). No API key and no stub in the app. The fake model used by the tests lives in `backend/tests/` only. The response still has a `stub` field, always false in the app, with a badge in the UI. It is kept so a fake backend can be labelled, and only the test fake sets it to true. Every response reports the model and the prompt version that produced it.
 
 ## Quick start
 
@@ -148,6 +148,7 @@ The 26.3 s is the first question, which includes loading the model. The tuning s
 - The policy approval table is shown as the text of the file, not as a rendered table.
 - `approved_by` not equal to a name also counts invoices with no approver.
 - The backend is read once at startup, so a changed data file needs a restart.
+- The chat shows only the latest answer and its evidence, not a history. That keeps one evidence panel unambiguous. Scrollback and saved conversations are not built.
 
 ## Time and next steps
 
@@ -161,13 +162,13 @@ Next, in order. First the gaps the eval found (the time is my estimate, includin
 - **Names that match nothing.** Suggest the closest vendor names in the decline, so "Stellar Facility" gets a hint.
 - **A bigger eval:** 40 questions, a second reviewer for the verdicts, and an injection test with instructions hidden in a data field.
 
-Then: replacing the `httpx` test dependency (the warning above), real ECB rates, a cancel button, frontend tests, and phone and cross-browser checks.
+Then: replacing the `httpx` test dependency (the warning above), real ECB rates, a cancel button, chat scrollback and saved history, frontend tests, and phone and cross-browser checks.
 
 ## How AI was used
 
-I built this with Claude Code in VS Code, in small reviewed steps. I set the architecture and the rules in `CLAUDE.md`, made the design decisions, reviewed each piece, tested the screens and made the commits. The assistant wrote most of the code and explained each piece. The log records what was generated, what I changed or rejected, and what went wrong.
+I built this with Claude Code in VS Code, in small reviewed steps. The architecture and the rules in `CLAUDE.md` started from a planning conversation with Claude (see below). I made the later design decisions, reviewed each piece, tested the screens and made the commits. The assistant wrote most of the code and explained each piece. The log records what was generated, what I changed or rejected, and what went wrong.
 
-- `CLAUDE.md`: the working agreement and the architecture. I wrote the final draft, refined with Claude from a preflight conversation, before any code.
+- `CLAUDE.md`: the working agreement and the architecture. The first draft of `CLAUDE.md` and the architecture came from a planning conversation with Claude before any code. I adopted them after looking at the alternatives in `docs/DECISIONS.md`, then edited them and made the later design decisions, which are logged.
 - `docs/AI_USAGE.md`: what was asked, what was generated, what was changed or got wrong, and what was verified, for each milestone.
 - `docs/DECISIONS.md`: the decisions and the alternatives I considered.
 - `docs/PROMPTS.md`: the key prompts to the assistant (summaries, with the opening prompt word for word), and the prompts the app sends to the model.
